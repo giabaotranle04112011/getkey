@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Tạo Key Script</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 32px 28px;
+            width: 100%;
+            max-width: 460px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+        }
+
+        h1 {
+            font-size: 1.65rem;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        p.desc {
+            font-size: 0.92rem;
+            color: #b0b8c4;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .key-display {
+            background: rgba(0, 0, 0, 0.35);
+            border: 2px dashed #00d2ff;
+            border-radius: 12px;
+            padding: 18px 16px;
+            font-size: 1.45rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            color: #3a7bd5;
+            margin-bottom: 22px;
+            min-height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-break: break-all;
+            transition: all 0.35s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .key-display.success {
+            border-color: #2ecc71;
+            color: #2ecc71;
+            background: rgba(46, 204, 113, 0.08);
+            animation: popIn 0.45s ease;
+        }
+
+        .key-display.loading {
+            border-color: #f39c12;
+            color: #f39c12;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.92); opacity: 0.6; }
+            70% { transform: scale(1.03); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Progress bar */
+        .progress-wrapper {
+            margin-bottom: 22px;
+            display: none;
+        }
+
+        .progress-wrapper.active {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            border-radius: 10px;
+            transition: width 1s linear;
+        }
+
+        .timer-text {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            color: #fff;
+            border: none;
+            padding: 15px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 20px rgba(0, 210, 255, 0.25);
+            letter-spacing: 0.3px;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 210, 255, 0.4);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: #4a5568;
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.75;
+        }
+
+        .btn-copy {
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            margin-top: 12px;
+            display: none;
+            box-shadow: 0 6px 18px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-copy:hover {
+            box-shadow: 0 8px 22px rgba(39, 174, 96, 0.45);
+        }
+
+        .btn-copy.copied {
+            background: linear-gradient(90deg, #16a085, #1abc9c);
+        }
+
+        .last-key {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #8899aa;
+            display: none;
+        }
+
+        .last-key span {
+            color: #00d2ff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .footer {
+            margin-top: 24px;
+            font-size: 0.75rem;
+            color: #667788;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>HỆ THỐNG TẠO KEY SCRIPT</h1>
+    <p class="desc">Bấm nút bên dưới và chờ 60 giây để nhận Key. Mỗi lần tạo có thời gian chờ cố định.</p>
+
+    <div class="key-display" id="keyDisplay">TLGB-XXXX-XXXX</div>
+
+    <div class="progress-wrapper" id="progressWrapper">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="timer-text" id="timerText">Thời gian còn lại: 60s</div>
+    </div>
+
+    <button class="btn" id="generateBtn" onclick="startGeneration()">TẠO KEY NGAY</button>
+    <button class="btn btn-copy" id="copyBtn" onclick="copyKey()">SAO CHÉP KEY</button>
+
+    <div class="last-key" id="lastKeyInfo">
+        Key gần nhất: <span id="lastKeyText" onclick="useLastKey()"></span>
+    </div>
+
+    <div class="footer">Key được tạo ngẫu nhiên • Chỉ dùng cho mục đích cá nhân</div>
+</div>
+
+<script>
+    let countdown = 60;
+    let timerInterval = null;
+    let isGenerating = false;
+    const TOTAL_TIME = 60;
+
+    // Lấy key cũ từ localStorage
+    const lastKey = localStorage.getItem('lastScriptKey');
+    if (lastKey) {
+        document.getElementById('lastKeyInfo').style.display = 'block';
+        document.getElementById('lastKeyText').innerText = lastKey;
+    }
+
+    function getRandomBlock(length = 4) {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // bỏ I, O, 0, 1 dễ nhầm
+        let result = '';
+        for (let i = 0; i < length; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+    }
+
+    function generateKeyString() {
+        return `TLGB-${getRandomBlock()}-${getRandomBlock()}`;
+    }
+
+    function startGeneration() {
+        if (isGenerating) return;
+
+        const btn = document.getElementById('generateBtn');
+        const display = document.getElementById('keyDisplay');
+        const copyBtn = document.getElementById('copyBtn');
+        const progressWrapper = document.getElementById('progressWrapper');
+        const progressFill = document.getElementById('progressFill');
+        const timerText = document.getElementById('timerText');
+
+        isGenerating = true;
+        btn.disabled = true;
+        btn.innerText = 'ĐANG TẠO KEY...';
+        copyBtn.style.display = 'none';
+        copyBtn.classList.remove('copied');
+        copyBtn.innerText = 'SAO CHÉP KEY';
+
+        countdown = TOTAL_TIME;
+        display.innerText = 'Đang tiến hành tạo key...';
+        display.className = 'key-display loading';
+
+        progressWrapper.classList.add('active');
+        progressFill.style.width = '0%';
+        timerText.innerText = `Thời gian còn lại: ${countdown}s`;
+
+        // Force reflow để animation chạy mượt
+        progressFill.offsetHeight;
+        progressFill.style.width = '100%';
+
+        timerInterval = setInterval(() => {
+            countdown--;
+            timerText.innerText = `Thời gian còn lại: ${countdown}s`;
+
+            if (countdown <= 0) {
+                clearInterval(timerInterval);
+                finishGeneration();
+            }
+        }, 1000);
+    }
+
+    function finishGeneration() {
+        const btn = document.getElementById('generateBtn');
+        const display = document.getElementById('keyDisplay');
+        const copyBtn = document.getElementById('copyBtn');
+        const progressWrapper = document.getElementById('progressWrapper');
+        const lastKeyInfo = document.getElementById('lastKeyInfo');
+        const lastKeyText = document.getElementById('lastKeyText');
+
+        const newKey = generateKeyString();
+        display.innerText = newKey;
+        display.className = 'key-display success';
+
+        // Lưu vào localStorage
+        localStorage.setItem('lastScriptKey', newKey);
+        lastKeyText.innerText = newKey;
+        lastKeyInfo.style.display = 'block';
+
+        btn.disabled = false;
+        btn.innerText = 'TẠO KEY MỚI';
+        progressWrapper.classList.remove('active');
+        copyBtn.style.display = 'block';
+
+        isGenerating = false;
+    }
+
+    function copyKey() {
+        const keyText = document.getElementById('keyDisplay').innerText;
+        const copyBtn = document.getElementById('copyBtn');
+
+        // Ưu tiên Clipboard API
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(keyText).then(() => {
+                showCopied(copyBtn);
+            }).catch(() => {
+                fallbackCopy(keyText, copyBtn);
+            });
+        } else {
+            fallbackCopy(keyText, copyBtn);
+        }
+    }
+
+    function fallbackCopy(text, btn) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showCopied(btn);
+        } catch (err) {
+            alert('Không thể sao chép. Vui lòng copy thủ công: ' + text);
+        }
+        document.body.removeChild(textarea);
+    }
+
+    function showCopied(btn) {
+        btn.innerText = '✓ ĐÃ SAO CHÉP';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.innerText = 'SAO CHÉP KEY';
+            btn.classList.remove('copied');
+        }, 2000);
+    }
+
+    function useLastKey() {
+        const last = localStorage.getItem('lastScriptKey');
+        if (last) {
+            document.getElementById('keyDisplay').innerText = last;
+            document.getElementById('keyDisplay').className = 'key-display success';
+            document.getElementById('copyBtn').style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
