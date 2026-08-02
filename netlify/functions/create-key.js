@@ -12,13 +12,15 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // 1. Tạo Key ngẫu nhiên (dạng TLGB-XXXX-XXXX)
+        // 1. Tính toán thời gian hiện tại và thời gian hết hạn (sau 24h = 86,400 giây)
+        const now = Math.floor(Date.now() / 1000);
+        const EXPIRE_IN_SECONDS = 24 * 60 * 60; // 86400 giây
+        const expiresAt = now + EXPIRE_IN_SECONDS;
+
+        // 2. Tạo Key ngẫu nhiên (dạng TLGB-XXXX-XXXX)
         const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         const genChunk = () => Array.from({length: 4}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
         const newKey = `TLGB-${genChunk()}-${genChunk()}`;
-
-        // 2. Lấy Unix Timestamp thời điểm hiện tại (tính bằng giây)
-        const createdAt = Math.floor(Date.now() / 1000);
 
         // 3. Tải file keys.json từ GitHub
         const getUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
@@ -42,10 +44,10 @@ exports.handler = async (event, context) => {
         try {
             const parsed = JSON.parse(currentContent);
             
-            // Tự động chuyển đổi nếu file cũ trên GitHub đang là Mảng []
+            // Chuyển đổi dữ liệu cũ nếu file trên GitHub đang là mảng []
             if (Array.isArray(parsed)) {
                 parsed.forEach(k => {
-                    if (typeof k === 'string') keyMap[k] = createdAt;
+                    if (typeof k === 'string') keyMap[k] = expiresAt;
                 });
             } else if (typeof parsed === 'object' && parsed !== null) {
                 keyMap = parsed;
@@ -54,10 +56,17 @@ exports.handler = async (event, context) => {
             keyMap = {};
         }
 
-        // 4. Thêm Key mới cùng thời gian tạo (Unix Timestamp)
-        keyMap[newKey] = createdAt;
+        // 4. TỰ ĐỘNG LỌC: Xóa các Key đã quá hạn 24h khỏi file keys.json
+        Object.keys(keyMap).forEach(key => {
+            if (typeof keyMap[key] === 'number' && keyMap[key] <= now) {
+                delete keyMap[key];
+            }
+        });
 
-        // 5. Commit ghi đè file keys.json mới lên GitHub
+        // 5. Thêm Key mới với giá trị là timestamp hết hạn
+        keyMap[newKey] = expiresAt;
+
+        // 6. Commit ghi đè file keys.json lên GitHub
         const updatedContentB64 = Buffer.from(JSON.stringify(keyMap, null, 2)).toString('base64');
         const putRes = await fetch(getUrl, {
             method: "PUT",
@@ -68,23 +77,24 @@ exports.handler = async (event, context) => {
                 "Accept": "application/vnd.github.v3+json"
             },
             body: JSON.stringify({
-                message: `🤖 Auto add key with timestamp: ${newKey}`,
+                message: `🤖 Auto add key: ${newKey} (Expires in 24h)`,
                 content: updatedContentB64,
                 sha: fileData.sha
             })
         });
 
         if (putRes.ok) {
-            // Định dạng ngày giờ chuẩn Việt Nam (UTC+7) để trả về cho giao diện Web hiển thị
-            const createdDateStr = new Date(createdAt * 1000).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
-            const expireDateStr = new Date((createdAt + 86400) * 1000).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+            // Định dạng ngày giờ chuẩn Việt Nam (UTC+7)
+            const createdDateStr = new Date(now * 1000).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+            const expireDateStr = new Date(expiresAt * 1000).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
 
             return {
                 statusCode: 200,
                 body: JSON.stringify({ 
                     success: true, 
                     key: newKey,
-                    createdAt: createdAt,
+                    createdAt: now,
+                    expiresAt: expiresAt,
                     createdDate: createdDateStr,
                     expireDate: expireDateStr
                 })
