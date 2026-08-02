@@ -12,12 +12,15 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // 1. Tạo Key ngẫu nhiên
+        // 1. Tạo Key ngẫu nhiên (dạng TLGB-XXXX-XXXX)
         const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         const genChunk = () => Array.from({length: 4}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
         const newKey = `TLGB-${genChunk()}-${genChunk()}`;
 
-        // 2. Lấy file keys.json từ GitHub
+        // 2. Lấy Unix Timestamp thời điểm hiện tại (tính bằng giây)
+        const createdAt = Math.floor(Date.now() / 1000);
+
+        // 3. Tải file keys.json từ GitHub
         const getUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
         const getRes = await fetch(getUrl, {
             headers: {
@@ -34,15 +37,28 @@ exports.handler = async (event, context) => {
 
         const fileData = await getRes.json();
         const currentContent = Buffer.from(fileData.content, 'base64').toString('utf-8');
-        let keyList = JSON.parse(currentContent);
-
-        // 3. Thêm Key mới vào danh sách
-        if (!keyList.includes(newKey)) {
-            keyList.push(newKey);
+        
+        let keyMap = {};
+        try {
+            const parsed = JSON.parse(currentContent);
+            
+            // Tự động chuyển đổi nếu file cũ trên GitHub đang là Mảng []
+            if (Array.isArray(parsed)) {
+                parsed.forEach(k => {
+                    if (typeof k === 'string') keyMap[k] = createdAt;
+                });
+            } else if (typeof parsed === 'object' && parsed !== null) {
+                keyMap = parsed;
+            }
+        } catch (e) {
+            keyMap = {};
         }
 
-        // 4. Commit ghi đè file keys.json lên GitHub
-        const updatedContentB64 = Buffer.from(JSON.stringify(keyList, null, 2)).toString('base64');
+        // 4. Thêm Key mới cùng thời gian tạo (Unix Timestamp)
+        keyMap[newKey] = createdAt;
+
+        // 5. Commit ghi đè file keys.json mới lên GitHub
+        const updatedContentB64 = Buffer.from(JSON.stringify(keyMap, null, 2)).toString('base64');
         const putRes = await fetch(getUrl, {
             method: "PUT",
             headers: {
@@ -52,16 +68,26 @@ exports.handler = async (event, context) => {
                 "Accept": "application/vnd.github.v3+json"
             },
             body: JSON.stringify({
-                message: `🤖 Auto add key: ${newKey}`,
+                message: `🤖 Auto add key with timestamp: ${newKey}`,
                 content: updatedContentB64,
                 sha: fileData.sha
             })
         });
 
         if (putRes.ok) {
+            // Định dạng ngày giờ chuẩn Việt Nam (UTC+7) để trả về cho giao diện Web hiển thị
+            const createdDateStr = new Date(createdAt * 1000).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+            const expireDateStr = new Date((createdAt + 86400) * 1000).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+
             return {
                 statusCode: 200,
-                body: JSON.stringify({ success: true, key: newKey })
+                body: JSON.stringify({ 
+                    success: true, 
+                    key: newKey,
+                    createdAt: createdAt,
+                    createdDate: createdDateStr,
+                    expireDate: expireDateStr
+                })
             };
         } else {
             const errText = await putRes.text();
