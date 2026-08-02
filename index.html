@@ -3,157 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Tạo Key Script VIP</title>
+    <title>Hệ Thống Cấp Key Script VIP 24H</title>
     <style>
+        :root {
+            --bg-color: #080d1a;
+            --card-bg: rgba(15, 23, 42, 0.75);
+            --primary: #00f2fe;
+            --primary-glow: rgba(0, 242, 254, 0.4);
+            --secondary: #4facfe;
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.3);
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.12);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: radial-gradient(circle at top left, #0f172a, #090d16), 
-                        linear-gradient(135deg, #0d1b2a, #1b263b);
-            color: #f8fafc;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(0, 242, 254, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(79, 172, 254, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.8) 0%, #080d1a 100%);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
             overflow-x: hidden;
+            position: relative;
         }
 
-        /* Ambient Glow Effect */
-        body::before {
-            content: '';
+        /* Ambient Animated Grid Background */
+        body::after {
+            content: "";
             position: absolute;
-            width: 300px;
-            height: 300px;
-            background: #00d2ff;
-            filter: blur(140px);
-            opacity: 0.15;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
             z-index: 0;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%);
         }
 
         .container {
             position: relative;
             z-index: 1;
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 24px;
-            padding: 36px 30px;
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            padding: 40px 32px;
             width: 100%;
             max-width: 480px;
             text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7),
-                        0 0 30px rgba(0, 210, 255, 0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8),
+                        0 0 40px rgba(0, 242, 254, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .badge {
-            display: inline-flex;
+        /* Header Info Bar */
+        .status-header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 6px;
-            background: rgba(0, 210, 255, 0.1);
-            border: 1px solid rgba(0, 210, 255, 0.3);
-            color: #00d2ff;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.78rem;
+            margin-bottom: 24px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 50px;
+            font-size: 0.8rem;
             font-weight: 600;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
-        .badge-dot {
-            width: 6px;
-            height: 6px;
-            background-color: #00d2ff;
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--success);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
             border-radius: 50%;
-            box-shadow: 0 0 8px #00d2ff;
+            box-shadow: 0 0 10px var(--success);
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .expire-info {
+            color: var(--text-sub);
         }
 
         h1 {
-            font-size: 1.8rem;
+            font-size: 1.9rem;
             font-weight: 800;
+            letter-spacing: -0.5px;
             margin-bottom: 8px;
-            background: linear-gradient(135deg, #ffffff 30%, #a5f3fc 100%);
+            background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         p.desc {
-            font-size: 0.9rem;
-            color: #94a3b8;
-            margin-bottom: 26px;
-            line-height: 1.6;
+            font-size: 0.92rem;
+            color: var(--text-sub);
+            margin-bottom: 28px;
+            line-height: 1.5;
         }
 
+        /* Key Display Box */
         .key-box-wrapper {
             position: relative;
-            margin-bottom: 22px;
+            margin-bottom: 24px;
         }
 
         .key-display {
-            background: rgba(15, 23, 42, 0.8);
-            border: 2px dashed rgba(0, 210, 255, 0.4);
-            border-radius: 16px;
-            padding: 20px 16px;
-            font-size: 1.4rem;
+            background: rgba(8, 13, 26, 0.85);
+            border: 2px dashed rgba(0, 242, 254, 0.35);
+            border-radius: 20px;
+            padding: 22px 16px;
+            font-size: 1.45rem;
             font-weight: 700;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
             letter-spacing: 2px;
-            color: #38bdf8;
-            min-height: 72px;
+            color: var(--primary);
+            min-height: 84px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             word-break: break-all;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.35s ease;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
         }
 
         .key-display.success {
-            border: 2px solid #22c55e;
-            color: #4ade80;
-            background: rgba(34, 197, 94, 0.08);
-            box-shadow: 0 0 20px rgba(34, 197, 94, 0.25);
-            animation: pulseSuccess 0.5s ease;
+            border: 2px solid var(--success);
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.08);
+            box-shadow: 0 0 25px var(--success-glow);
+            animation: bounceIn 0.5s ease;
         }
 
         .key-display.loading {
-            border-color: #f59e0b;
-            color: #fbbf24;
-            background: rgba(245, 158, 11, 0.08);
+            border-color: var(--warning);
+            color: var(--warning);
+            background: rgba(245, 158, 11, 0.06);
         }
 
-        @keyframes pulseSuccess {
-            0% { transform: scale(0.96); }
+        @keyframes bounceIn {
+            0% { transform: scale(0.95); opacity: 0.7; }
             50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Expire tag inside display */
         .expire-tag {
-            display: block;
-            font-size: 0.75rem;
-            color: #94a3b8;
-            margin-top: 6px;
-            font-family: sans-serif;
-            font-weight: 400;
+            display: inline-block;
+            font-size: 0.78rem;
+            color: #a7f3d0;
+            margin-top: 8px;
+            font-family: system-ui, -apple-system, sans-serif;
+            font-weight: 500;
             letter-spacing: 0;
+            background: rgba(16, 185, 129, 0.15);
+            padding: 3px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
-        /* Progress Bar */
+        /* Progress Bar Section */
         .progress-wrapper {
-            margin-bottom: 22px;
+            margin-bottom: 24px;
             display: none;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -165,28 +205,30 @@
         }
 
         .progress-bar {
-            height: 6px;
+            height: 8px;
             background: rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
             margin-bottom: 10px;
+            position: relative;
         }
 
         .progress-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #38bdf8, #818cf8);
-            border-radius: 10px;
-            transition: width 5s linear; /* Tự động khớp với 5s */
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            border-radius: 12px;
+            box-shadow: 0 0 12px var(--primary-glow);
+            transition: width 5s linear;
         }
 
         .timer-text {
             font-size: 0.85rem;
-            color: #cbd5e1;
-            font-weight: 500;
+            color: var(--text-sub);
+            font-weight: 600;
         }
 
-        /* Buttons */
+        /* Control Buttons */
         .btn-group {
             display: flex;
             flex-direction: column;
@@ -194,24 +236,26 @@
         }
 
         .btn {
-            background: linear-gradient(135deg, #0284c7, #2563eb);
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
             color: #ffffff;
             border: none;
             padding: 16px 24px;
             font-size: 1rem;
             font-weight: 700;
-            border-radius: 14px;
+            border-radius: 16px;
             cursor: pointer;
             width: 100%;
-            transition: all 0.25s ease;
-            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.35);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
             letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
         }
 
         .btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(2, 132, 199, 0.5);
-            background: linear-gradient(135deg, #0369a1, #1d4ed8);
+            box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.6);
+            background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
         }
 
         .btn:active:not(:disabled) {
@@ -219,49 +263,56 @@
         }
 
         .btn:disabled {
-            background: #334155;
+            background: #1e293b;
             color: #64748b;
             cursor: not-allowed;
             box-shadow: none;
-            opacity: 0.8;
+            opacity: 0.75;
         }
 
         .btn-copy {
-            background: linear-gradient(135deg, #16a34a, #15803d);
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
             display: none;
-            box-shadow: 0 8px 20px rgba(22, 163, 74, 0.3);
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
         }
 
         .btn-copy:hover {
-            box-shadow: 0 12px 25px rgba(22, 163, 74, 0.45);
-            background: linear-gradient(135deg, #15803d, #166534);
+            box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.6);
+            background: linear-gradient(135deg, #047857 0%, #059669 100%);
         }
 
         .btn-copy.copied {
-            background: linear-gradient(135deg, #0d9488, #0f766e);
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
         }
 
+        /* History & Footer */
         .last-key {
-            margin-top: 22px;
-            padding-top: 16px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            font-size: 0.82rem;
-            color: #64748b;
+            margin-top: 24px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            color: var(--text-sub);
             display: none;
+            text-align: center;
         }
 
         .last-key span {
-            color: #38bdf8;
-            font-weight: 600;
+            color: var(--primary);
+            font-weight: 700;
             font-family: monospace;
             cursor: pointer;
             text-decoration: underline;
-            margin-left: 4px;
+            margin-left: 6px;
+            transition: color 0.2s;
+        }
+
+        .last-key span:hover {
+            color: #60a5fa;
         }
 
         .footer {
-            margin-top: 20px;
-            font-size: 0.75rem;
+            margin-top: 24px;
+            font-size: 0.78rem;
             color: #475569;
         }
     </style>
@@ -269,17 +320,24 @@
 <body>
 
 <div class="container">
-    <div class="badge">
-        <span class="badge-dot"></span> Hạn sử dụng Key: 24 Giờ
+    <!-- Header status -->
+    <div class="status-header">
+        <div class="status-badge">
+            <span class="pulse-dot"></span>
+            <span>Server Ready</span>
+        </div>
+        <div class="expire-info">Hạn Dùng: <strong>24 Giờ</strong></div>
     </div>
     
-    <h1>HỆ THỐNG TẠO KEY SCRIPT</h1>
-    <p class="desc">Nhấn nút bên dưới và chờ <strong>5 giây</strong> để hệ thống cấp Key tự động.</p>
+    <h1>TẠO KEY SCRIPT VIP</h1>
+    <p class="desc">Bấm nút bên dưới và chờ <strong>5 giây</strong> để khởi tạo Key tự động kích hoạt Script.</p>
 
+    <!-- Key Display Box -->
     <div class="key-box-wrapper">
         <div class="key-display" id="keyDisplay">TLGB-XXXX-XXXX</div>
     </div>
 
+    <!-- Progress bar & Timer -->
     <div class="progress-wrapper" id="progressWrapper">
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
@@ -287,16 +345,18 @@
         <div class="timer-text" id="timerText">Thời gian chờ: 5s</div>
     </div>
 
+    <!-- Action Buttons -->
     <div class="btn-group">
-        <button class="btn" id="generateBtn" onclick="startGeneration()">TẠO KEY NGAY (5s)</button>
-        <button class="btn btn-copy" id="copyBtn" onclick="copyKey()">SAO CHÉP KEY</button>
+        <button class="btn" id="generateBtn" onclick="startGeneration()">⚡ TẠO KEY NGAY (5s)</button>
+        <button class="btn btn-copy" id="copyBtn" onclick="copyKey()">📋 SAO CHÉP KEY</button>
     </div>
 
+    <!-- Saved Key Info -->
     <div class="last-key" id="lastKeyInfo">
-        Key gần nhất: <span id="lastKeyText" onclick="useLastKey()"></span>
+        🔑 Key gần nhất: <span id="lastKeyText" title="Bấm vào đây để sử dụng lại Key này" onclick="useLastKey()"></span>
     </div>
 
-    <div class="footer">Key tự động hủy sau 24h kể từ khi khởi tạo</div>
+    <div class="footer">Hệ thống cấp Key tự động • Bản quyền © 2026 TLGB</div>
 </div>
 
 <script>
@@ -305,12 +365,14 @@
     let timerInterval = null;
     let isGenerating = false;
 
-    // Load key gần nhất từ localStorage nếu có
-    const lastKey = localStorage.getItem('lastScriptKey');
-    if (lastKey) {
-        document.getElementById('lastKeyInfo').style.display = 'block';
-        document.getElementById('lastKeyText').innerText = lastKey;
-    }
+    // Load key gần nhất lưu trong localStorage nếu có
+    window.addEventListener('DOMContentLoaded', () => {
+        const lastKey = localStorage.getItem('lastScriptKey');
+        if (lastKey) {
+            document.getElementById('lastKeyInfo').style.display = 'block';
+            document.getElementById('lastKeyText').innerText = lastKey;
+        }
+    });
 
     function startGeneration() {
         if (isGenerating) return;
@@ -324,13 +386,13 @@
 
         isGenerating = true;
         btn.disabled = true;
-        btn.innerText = 'ĐANG TẠO KEY...';
+        btn.innerText = '⏳ ĐANG KHỞI TẠO KEY...';
         copyBtn.style.display = 'none';
         copyBtn.classList.remove('copied');
-        copyBtn.innerText = 'SAO CHÉP KEY';
+        copyBtn.innerText = '📋 SAO CHÉP KEY';
 
         countdown = TOTAL_TIME;
-        display.innerHTML = 'Đang khởi tạo key...';
+        display.innerHTML = 'Đang khởi tạo thuật toán...';
         display.className = 'key-display loading';
 
         progressWrapper.classList.add('active');
@@ -338,18 +400,30 @@
         progressFill.style.width = '0%';
         timerText.innerText = `Thời gian chờ: ${countdown}s`;
 
-        // Ép hiệu ứng vẽ lại thanh tiến trình
+        // Ép vẽ lại DOM trước khi gán transition 5s
         progressFill.offsetHeight;
         progressFill.style.transition = `width ${TOTAL_TIME}s linear`;
         progressFill.style.width = '100%';
 
+        const statusSteps = [
+            { t: 4, msg: 'Đang tạo chuỗi ngẫu nhiên...' },
+            { t: 2, msg: 'Đang kết nối Netlify Server...' },
+            { t: 1, msg: 'Đang đồng bộ dữ liệu GitHub...' }
+        ];
+
         timerInterval = setInterval(() => {
             countdown--;
-            if (countdown > 0) {
+            
+            const step = statusSteps.find(s => s.t === countdown);
+            if (step) {
+                timerText.innerText = step.msg;
+            } else if (countdown > 0) {
                 timerText.innerText = `Thời gian chờ: ${countdown}s`;
-            } else {
-                timerText.innerText = `Đang đồng bộ GitHub...`;
+            }
+
+            if (countdown <= 0) {
                 clearInterval(timerInterval);
+                timerText.innerText = 'Đang nhận kết quả...';
                 finishGeneration();
             }
         }, 1000);
@@ -364,39 +438,40 @@
         const lastKeyText = document.getElementById('lastKeyText');
 
         try {
-            // Gọi Netlify Function sinh Key và lưu vào GitHub
+            // Gọi Netlify Function sinh Key mới
             const res = await fetch('/.netlify/functions/create-key');
             const data = await res.json();
 
             if (data.success && data.key) {
                 const newKey = data.key;
-                const expireStr = data.expireDate ? `<span class="expire-tag">Hết hạn: ${data.expireDate}</span>` : '';
+                const expireStr = data.expireDate ? `<div class="expire-tag">⏰ Hết hạn: ${data.expireDate}</div>` : '';
                 
-                display.innerHTML = `<div>${newKey}${expireStr}</div>`;
+                display.innerHTML = `${newKey}${expireStr}`;
                 display.className = 'key-display success';
 
+                // Lưu lại Key vào localStorage
                 localStorage.setItem('lastScriptKey', newKey);
                 lastKeyText.innerText = newKey;
                 lastKeyInfo.style.display = 'block';
 
                 btn.disabled = false;
-                btn.innerText = 'TẠO KEY MỚI';
+                btn.innerText = '⚡ TẠO KEY MỚI';
                 progressWrapper.classList.remove('active');
                 copyBtn.style.display = 'block';
             } else {
                 display.innerText = 'LỖI TẠO KEY!';
                 display.className = 'key-display';
-                alert('Lỗi: ' + (data.error || 'Không thể lưu Key vào Server'));
+                alert('Lỗi Server: ' + (data.error || 'Không thể ghi Key vào CSDL'));
                 btn.disabled = false;
-                btn.innerText = 'THỬ LẠI';
+                btn.innerText = '🔄 THỬ LẠI';
                 progressWrapper.classList.remove('active');
             }
         } catch (err) {
             display.innerText = 'LỖI KẾT NỐI!';
             display.className = 'key-display';
-            alert('Lỗi kết nối Server Netlify!');
+            alert('Lỗi: Không thể kết nối tới Server Netlify. Vui lòng kiểm tra lại mạng hoặc thử lại!');
             btn.disabled = false;
-            btn.innerText = 'THỬ LẠI';
+            btn.innerText = '🔄 THỬ LẠI';
             progressWrapper.classList.remove('active');
         }
 
@@ -405,9 +480,14 @@
 
     function copyKey() {
         const display = document.getElementById('keyDisplay');
-        // Chỉ lấy text của Key (bỏ phần tag hết hạn bên dưới)
+        // Chỉ lấy chuỗi Key chính (tách phần thông báo hạn dùng phía dưới nếu có)
         const keyText = display.innerText.split('\n')[0].trim();
         const copyBtn = document.getElementById('copyBtn');
+
+        if (!keyText || keyText === 'TLGB-XXXX-XXXX' || keyText.includes('LỖI')) {
+            alert('Chưa có Key hợp lệ để sao chép!');
+            return;
+        }
 
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(keyText).then(() => {
@@ -431,18 +511,18 @@
             document.execCommand('copy');
             showCopied(btn);
         } catch (err) {
-            alert('Vui lòng sao chép thủ công: ' + text);
+            alert('Sao chép thủ công: ' + text);
         }
         document.body.removeChild(textarea);
     }
 
     function showCopied(btn) {
-        btn.innerText = '✓ ĐÃ SAO CHÉP';
+        btn.innerText = '✓ ĐÃ SAO CHÉP!';
         btn.classList.add('copied');
         setTimeout(() => {
-            btn.innerText = 'SAO CHÉP KEY';
+            btn.innerText = '📋 SAO CHÉP KEY';
             btn.classList.remove('copied');
-        }, 2000);
+        }, 2200);
     }
 
     function useLastKey() {
