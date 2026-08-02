@@ -3,139 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Tạo Key Script</title>
+    <title>Hệ Thống Tạo Key Script VIP</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: #fff;
+            background: radial-gradient(circle at top left, #0f172a, #090d16), 
+                        linear-gradient(135deg, #0d1b2a, #1b263b);
+            color: #f8fafc;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow Effect */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: #00d2ff;
+            filter: blur(140px);
+            opacity: 0.15;
+            z-index: 0;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(16px);
+            position: relative;
+            z-index: 1;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 20px;
-            padding: 32px 28px;
+            border-radius: 24px;
+            padding: 36px 30px;
             width: 100%;
-            max-width: 460px;
+            max-width: 480px;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7),
+                        0 0 30px rgba(0, 210, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            color: #00d2ff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #00d2ff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00d2ff;
         }
 
         h1 {
-            font-size: 1.65rem;
+            font-size: 1.8rem;
+            font-weight: 800;
             margin-bottom: 8px;
-            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            background: linear-gradient(135deg, #ffffff 30%, #a5f3fc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         p.desc {
-            font-size: 0.92rem;
-            color: #b0b8c4;
-            margin-bottom: 28px;
-            line-height: 1.5;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 26px;
+            line-height: 1.6;
+        }
+
+        .key-box-wrapper {
+            position: relative;
+            margin-bottom: 22px;
         }
 
         .key-display {
-            background: rgba(0, 0, 0, 0.35);
-            border: 2px dashed #00d2ff;
-            border-radius: 12px;
-            padding: 18px 16px;
-            font-size: 1.45rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px dashed rgba(0, 210, 255, 0.4);
+            border-radius: 16px;
+            padding: 20px 16px;
+            font-size: 1.4rem;
             font-weight: 700;
-            letter-spacing: 2.5px;
-            color: #3a7bd5;
-            margin-bottom: 22px;
-            min-height: 68px;
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 2px;
+            color: #38bdf8;
+            min-height: 72px;
             display: flex;
             align-items: center;
             justify-content: center;
             word-break: break-all;
-            transition: all 0.35s ease;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .key-display.success {
-            border-color: #2ecc71;
-            color: #2ecc71;
-            background: rgba(46, 204, 113, 0.08);
-            animation: popIn 0.45s ease;
+            border: 2px solid #22c55e;
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.08);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.25);
+            animation: pulseSuccess 0.5s ease;
         }
 
         .key-display.loading {
-            border-color: #f39c12;
-            color: #f39c12;
+            border-color: #f59e0b;
+            color: #fbbf24;
+            background: rgba(245, 158, 11, 0.08);
         }
 
-        @keyframes popIn {
-            0% { transform: scale(0.92); opacity: 0.6; }
-            70% { transform: scale(1.03); }
-            100% { transform: scale(1); opacity: 1; }
+        @keyframes pulseSuccess {
+            0% { transform: scale(0.96); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
         }
 
+        /* Expire tag inside display */
+        .expire-tag {
+            display: block;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 6px;
+            font-family: sans-serif;
+            font-weight: 400;
+            letter-spacing: 0;
+        }
+
+        /* Progress Bar */
         .progress-wrapper {
             margin-bottom: 22px;
             display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .progress-wrapper.active {
             display: block;
+            opacity: 1;
         }
 
         .progress-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .progress-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
             border-radius: 10px;
-            transition: width 1s linear;
+            transition: width 5s linear; /* Tự động khớp với 5s */
         }
 
         .timer-text {
             font-size: 0.85rem;
-            color: #aaa;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .btn {
-            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
-            color: #fff;
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            color: #ffffff;
             border: none;
-            padding: 15px 28px;
+            padding: 16px 24px;
             font-size: 1rem;
-            font-weight: 600;
-            border-radius: 10px;
+            font-weight: 700;
+            border-radius: 14px;
             cursor: pointer;
             width: 100%;
             transition: all 0.25s ease;
-            box-shadow: 0 6px 20px rgba(0, 210, 255, 0.25);
-            letter-spacing: 0.3px;
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.35);
+            letter-spacing: 0.5px;
         }
 
         .btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 210, 255, 0.4);
+            box-shadow: 0 12px 28px rgba(2, 132, 199, 0.5);
+            background: linear-gradient(135deg, #0369a1, #1d4ed8);
         }
 
         .btn:active:not(:disabled) {
@@ -143,78 +219,93 @@
         }
 
         .btn:disabled {
-            background: #4a5568;
+            background: #334155;
+            color: #64748b;
             cursor: not-allowed;
             box-shadow: none;
-            opacity: 0.75;
+            opacity: 0.8;
         }
 
         .btn-copy {
-            background: linear-gradient(90deg, #27ae60, #2ecc71);
-            margin-top: 12px;
+            background: linear-gradient(135deg, #16a34a, #15803d);
             display: none;
-            box-shadow: 0 6px 18px rgba(39, 174, 96, 0.3);
+            box-shadow: 0 8px 20px rgba(22, 163, 74, 0.3);
         }
 
         .btn-copy:hover {
-            box-shadow: 0 8px 22px rgba(39, 174, 96, 0.45);
+            box-shadow: 0 12px 25px rgba(22, 163, 74, 0.45);
+            background: linear-gradient(135deg, #15803d, #166534);
         }
 
         .btn-copy.copied {
-            background: linear-gradient(90deg, #16a085, #1abc9c);
+            background: linear-gradient(135deg, #0d9488, #0f766e);
         }
 
         .last-key {
-            margin-top: 20px;
-            font-size: 0.8rem;
-            color: #8899aa;
+            margin-top: 22px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.82rem;
+            color: #64748b;
             display: none;
         }
 
         .last-key span {
-            color: #00d2ff;
+            color: #38bdf8;
             font-weight: 600;
+            font-family: monospace;
             cursor: pointer;
+            text-decoration: underline;
+            margin-left: 4px;
         }
 
         .footer {
-            margin-top: 24px;
+            margin-top: 20px;
             font-size: 0.75rem;
-            color: #667788;
+            color: #475569;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <div class="badge">
+        <span class="badge-dot"></span> Hạn sử dụng Key: 24 Giờ
+    </div>
+    
     <h1>HỆ THỐNG TẠO KEY SCRIPT</h1>
-    <p class="desc">Bấm nút bên dưới và chờ 60 giây để nhận Key. Mỗi lần tạo có thời gian chờ cố định.</p>
+    <p class="desc">Nhấn nút bên dưới và chờ <strong>5 giây</strong> để hệ thống cấp Key tự động.</p>
 
-    <div class="key-display" id="keyDisplay">TLGB-XXXX-XXXX</div>
+    <div class="key-box-wrapper">
+        <div class="key-display" id="keyDisplay">TLGB-XXXX-XXXX</div>
+    </div>
 
     <div class="progress-wrapper" id="progressWrapper">
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
-        <div class="timer-text" id="timerText">Thời gian còn lại: 60s</div>
+        <div class="timer-text" id="timerText">Thời gian chờ: 5s</div>
     </div>
 
-    <button class="btn" id="generateBtn" onclick="startGeneration()">TẠO KEY NGAY</button>
-    <button class="btn btn-copy" id="copyBtn" onclick="copyKey()">SAO CHÉP KEY</button>
+    <div class="btn-group">
+        <button class="btn" id="generateBtn" onclick="startGeneration()">TẠO KEY NGAY (5s)</button>
+        <button class="btn btn-copy" id="copyBtn" onclick="copyKey()">SAO CHÉP KEY</button>
+    </div>
 
     <div class="last-key" id="lastKeyInfo">
         Key gần nhất: <span id="lastKeyText" onclick="useLastKey()"></span>
     </div>
 
-    <div class="footer">Key được tạo ngẫu nhiên • Chỉ dùng cho mục đích cá nhân</div>
+    <div class="footer">Key tự động hủy sau 24h kể từ khi khởi tạo</div>
 </div>
 
 <script>
-    let countdown = 60;
+    const TOTAL_TIME = 5; // Cấu hình thời gian đếm ngược 5 giây
+    let countdown = TOTAL_TIME;
     let timerInterval = null;
     let isGenerating = false;
-    const TOTAL_TIME = 60;
 
+    // Load key gần nhất từ localStorage nếu có
     const lastKey = localStorage.getItem('lastScriptKey');
     if (lastKey) {
         document.getElementById('lastKeyInfo').style.display = 'block';
@@ -239,21 +330,25 @@
         copyBtn.innerText = 'SAO CHÉP KEY';
 
         countdown = TOTAL_TIME;
-        display.innerText = 'Đang tiến hành tạo key...';
+        display.innerHTML = 'Đang khởi tạo key...';
         display.className = 'key-display loading';
 
         progressWrapper.classList.add('active');
+        progressFill.style.transition = 'none';
         progressFill.style.width = '0%';
-        timerText.innerText = `Thời gian còn lại: ${countdown}s`;
+        timerText.innerText = `Thời gian chờ: ${countdown}s`;
 
+        // Ép hiệu ứng vẽ lại thanh tiến trình
         progressFill.offsetHeight;
+        progressFill.style.transition = `width ${TOTAL_TIME}s linear`;
         progressFill.style.width = '100%';
 
         timerInterval = setInterval(() => {
             countdown--;
-            timerText.innerText = `Thời gian còn lại: ${countdown}s`;
-
-            if (countdown <= 0) {
+            if (countdown > 0) {
+                timerText.innerText = `Thời gian chờ: ${countdown}s`;
+            } else {
+                timerText.innerText = `Đang đồng bộ GitHub...`;
                 clearInterval(timerInterval);
                 finishGeneration();
             }
@@ -268,16 +363,16 @@
         const lastKeyInfo = document.getElementById('lastKeyInfo');
         const lastKeyText = document.getElementById('lastKeyText');
 
-        display.innerText = 'Đang đồng bộ Key lên GitHub...';
-
         try {
-            // Tự động gọi Netlify Function để sinh Key và lưu vào GitHub
+            // Gọi Netlify Function sinh Key và lưu vào GitHub
             const res = await fetch('/.netlify/functions/create-key');
             const data = await res.json();
 
             if (data.success && data.key) {
                 const newKey = data.key;
-                display.innerText = newKey;
+                const expireStr = data.expireDate ? `<span class="expire-tag">Hết hạn: ${data.expireDate}</span>` : '';
+                
+                display.innerHTML = `<div>${newKey}${expireStr}</div>`;
                 display.className = 'key-display success';
 
                 localStorage.setItem('lastScriptKey', newKey);
@@ -309,7 +404,9 @@
     }
 
     function copyKey() {
-        const keyText = document.getElementById('keyDisplay').innerText;
+        const display = document.getElementById('keyDisplay');
+        // Chỉ lấy text của Key (bỏ phần tag hết hạn bên dưới)
+        const keyText = display.innerText.split('\n')[0].trim();
         const copyBtn = document.getElementById('copyBtn');
 
         if (navigator.clipboard && window.isSecureContext) {
@@ -334,7 +431,7 @@
             document.execCommand('copy');
             showCopied(btn);
         } catch (err) {
-            alert('Vui lòng copy thủ công: ' + text);
+            alert('Vui lòng sao chép thủ công: ' + text);
         }
         document.body.removeChild(textarea);
     }
