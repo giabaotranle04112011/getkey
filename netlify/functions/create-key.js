@@ -12,9 +12,9 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // 1. Tính toán thời gian hiện tại và thời gian hết hạn (sau 24h = 86,400 giây)
+        // 1. Tính toán mốc thời gian hết hạn (sau 24h = 86,400 giây)
         const now = Math.floor(Date.now() / 1000);
-        const EXPIRE_IN_SECONDS = 24 * 60 * 60; // 86400 giây
+        const EXPIRE_IN_SECONDS = 24 * 60 * 60; // 86400s
         const expiresAt = now + EXPIRE_IN_SECONDS;
 
         // 2. Tạo Key ngẫu nhiên (dạng TLGB-XXXX-XXXX)
@@ -28,7 +28,8 @@ exports.handler = async (event, context) => {
             headers: {
                 "Authorization": `token ${GITHUB_TOKEN}`,
                 "User-Agent": "Netlify-Key-Generator",
-                "Accept": "application/vnd.github.v3+json"
+                "Accept": "application/vnd.github.v3+json",
+                "Cache-Control": "no-cache"
             }
         });
 
@@ -44,7 +45,7 @@ exports.handler = async (event, context) => {
         try {
             const parsed = JSON.parse(currentContent);
             
-            // Chuyển đổi dữ liệu cũ nếu file trên GitHub đang là mảng []
+            // Tự động chuyển đổi dữ liệu cũ nếu file trên GitHub đang là Mảng []
             if (Array.isArray(parsed)) {
                 parsed.forEach(k => {
                     if (typeof k === 'string') keyMap[k] = expiresAt;
@@ -56,17 +57,17 @@ exports.handler = async (event, context) => {
             keyMap = {};
         }
 
-        // 4. TỰ ĐỘNG LỌC: Xóa các Key đã quá hạn 24h khỏi file keys.json
+        // 4. LỌC XÓA TỰ ĐỘNG: Xóa các Key đã quá hạn 24h khỏi CSDL
         Object.keys(keyMap).forEach(key => {
             if (typeof keyMap[key] === 'number' && keyMap[key] <= now) {
                 delete keyMap[key];
             }
         });
 
-        // 5. Thêm Key mới với giá trị là timestamp hết hạn
+        // 5. Thêm Key mới vào Object (Lưu mốc timestamp hết hạn 24h)
         keyMap[newKey] = expiresAt;
 
-        // 6. Commit ghi đè file keys.json lên GitHub
+        // 6. Commit ghi đè file keys.json mới lên GitHub
         const updatedContentB64 = Buffer.from(JSON.stringify(keyMap, null, 2)).toString('base64');
         const putRes = await fetch(getUrl, {
             method: "PUT",
