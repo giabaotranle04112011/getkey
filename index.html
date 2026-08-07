@@ -44,7 +44,6 @@
             position: relative;
         }
 
-        /* Ambient Animated Grid Background */
         body::after {
             content: "";
             position: absolute;
@@ -111,6 +110,54 @@
 
         .expire-info {
             color: var(--text-sub);
+        }
+
+        /* Language Toggle Button */
+        .lang-toggle {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 0;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 50px;
+            padding: 4px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .lang-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 16px rgba(0, 242, 254, 0.15);
+            border-color: rgba(0, 242, 254, 0.3);
+        }
+
+        .lang-option {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-sub);
+            user-select: none;
+        }
+
+        .lang-option.active {
+            background: linear-gradient(135deg, #0284c7, #00f2fe);
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 242, 254, 0.4);
+        }
+
+        .lang-divider {
+            width: 1px;
+            height: 14px;
+            background: rgba(255, 255, 255, 0.15);
+            flex-shrink: 0;
         }
 
         h1 {
@@ -315,22 +362,40 @@
             font-size: 0.78rem;
             color: #475569;
         }
+
+        /* Language switch animation */
+        .fade-text {
+            animation: fadeSwitch 0.3s ease;
+        }
+
+        @keyframes fadeSwitch {
+            0% { opacity: 0; transform: translateY(4px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
+
+    <!-- Language Toggle -->
+    <div class="lang-toggle" id="langToggle" onclick="toggleLanguage()" title="Switch Language">
+        <span class="lang-option active" id="langVI">VI</span>
+        <div class="lang-divider"></div>
+        <span class="lang-option" id="langEN">EN</span>
+    </div>
+
     <!-- Header status -->
     <div class="status-header">
         <div class="status-badge">
             <span class="pulse-dot"></span>
-            <span>Server Ready</span>
+            <span id="txt-server-status">Server Ready</span>
         </div>
-        <div class="expire-info">Hạn Dùng: <strong>24 Giờ</strong></div>
+        <div class="expire-info" id="txt-expire-label">Hạn Dùng: <strong>24 Giờ</strong></div>
     </div>
     
-    <h1>TẠO KEY SCRIPT VIP</h1>
-    <p class="desc">Bấm nút bên dưới và chờ <strong>5 giây</strong> để khởi tạo Key tự động kích hoạt Script.</p>
+    <h1 id="txt-title">TẠO KEY SCRIPT VIP</h1>
+    <p class="desc" id="txt-desc">Bấm nút bên dưới và chờ <strong>5 giây</strong> để khởi tạo Key tự động kích hoạt Script.</p>
 
     <!-- Key Display Box -->
     <div class="key-box-wrapper">
@@ -353,20 +418,144 @@
 
     <!-- Saved Key Info -->
     <div class="last-key" id="lastKeyInfo">
-        🔑 Key gần nhất: <span id="lastKeyText" title="Bấm vào đây để sử dụng lại Key này" onclick="useLastKey()"></span>
+        <span id="txt-last-key-label">🔑 Key gần nhất:</span>
+        <span id="lastKeyText" title="Bấm vào đây để sử dụng lại Key này" onclick="useLastKey()"></span>
     </div>
 
-    <div class="footer">Hệ thống cấp Key tự động • Bản quyền © 2026 TLGB</div>
+    <div class="footer" id="txt-footer">Hệ thống cấp Key tự động • Bản quyền © 2026 TLGB</div>
 </div>
 
 <script>
-    const TOTAL_TIME = 5; // Cấu hình thời gian đếm ngược 5 giây
+    const TOTAL_TIME = 5;
     let countdown = TOTAL_TIME;
     let timerInterval = null;
     let isGenerating = false;
+    let currentLang = 'vi'; // 'vi' or 'en'
 
-    // Load key gần nhất lưu trong localStorage nếu có
+    // ===================== TRANSLATIONS =====================
+    const translations = {
+        vi: {
+            pageTitle: 'Hệ Thống Cấp Key Script VIP 24H',
+            serverStatus: 'Server Ready',
+            expireLabel: 'Hạn Dùng: <strong>24 Giờ</strong>',
+            title: 'TẠO KEY SCRIPT VIP',
+            desc: 'Bấm nút bên dưới và chờ <strong>5 giây</strong> để khởi tạo Key tự động kích hoạt Script.',
+            generateBtn: '⚡ TẠO KEY NGAY (5s)',
+            generateNewBtn: '⚡ TẠO KEY MỚI',
+            retryBtn: '🔄 THỬ LẠI',
+            generatingBtn: '⏳ ĐANG KHỞI TẠO KEY...',
+            copyBtn: '📋 SAO CHÉP KEY',
+            copiedBtn: '✓ ĐÃ SAO CHÉP!',
+            lastKeyLabel: '🔑 Key gần nhất:',
+            lastKeyTitle: 'Bấm vào đây để sử dụng lại Key này',
+            footer: 'Hệ thống cấp Key tự động • Bản quyền © 2026 TLGB',
+            initializing: 'Đang khởi tạo thuật toán...',
+            receiving: 'Đang nhận kết quả...',
+            waitPrefix: 'Thời gian chờ: ',
+            waitSuffix: 's',
+            step4: 'Đang tạo chuỗi ngẫu nhiên...',
+            step2: 'Đang kết nối Netlify Server...',
+            step1: 'Đang đồng bộ dữ liệu GitHub...',
+            expireTag: '⏰ Hết hạn:',
+            errServer: 'Lỗi Server: ',
+            errDefault: 'Không thể ghi Key vào CSDL',
+            errConnect: 'Lỗi: Không thể kết nối tới Server Netlify. Vui lòng kiểm tra lại mạng hoặc thử lại!',
+            errNoKey: 'Chưa có Key hợp lệ để sao chép!',
+            errKeyDisplay: 'LỖI TẠO KEY!',
+            errConnDisplay: 'LỖI KẾT NỐI!',
+            noCopyManual: 'Sao chép thủ công: ',
+        },
+        en: {
+            pageTitle: 'VIP Script Key System 24H',
+            serverStatus: 'Server Ready',
+            expireLabel: 'Validity: <strong>24 Hours</strong>',
+            title: 'GENERATE VIP SCRIPT KEY',
+            desc: 'Press the button below and wait <strong>5 seconds</strong> to auto-generate your Script activation key.',
+            generateBtn: '⚡ GENERATE KEY (5s)',
+            generateNewBtn: '⚡ GENERATE NEW KEY',
+            retryBtn: '🔄 RETRY',
+            generatingBtn: '⏳ GENERATING KEY...',
+            copyBtn: '📋 COPY KEY',
+            copiedBtn: '✓ COPIED!',
+            lastKeyLabel: '🔑 Last Key:',
+            lastKeyTitle: 'Click here to reuse this key',
+            footer: 'Automated Key System • Copyright © 2026 TLGB',
+            initializing: 'Initializing algorithm...',
+            receiving: 'Receiving result...',
+            waitPrefix: 'Wait: ',
+            waitSuffix: 's',
+            step4: 'Generating random string...',
+            step2: 'Connecting to Netlify Server...',
+            step1: 'Syncing GitHub data...',
+            expireTag: '⏰ Expires:',
+            errServer: 'Server Error: ',
+            errDefault: 'Unable to write Key to database',
+            errConnect: 'Error: Cannot connect to Netlify Server. Please check your network and try again!',
+            errNoKey: 'No valid Key available to copy!',
+            errKeyDisplay: 'KEY ERROR!',
+            errConnDisplay: 'CONNECTION ERROR!',
+            noCopyManual: 'Manual copy: ',
+        }
+    };
+
+    // ===================== LANGUAGE SWITCHER =====================
+    function toggleLanguage() {
+        currentLang = currentLang === 'vi' ? 'en' : 'vi';
+        applyLanguage(currentLang);
+        localStorage.setItem('preferredLang', currentLang);
+    }
+
+    function applyLanguage(lang) {
+        const t = translations[lang];
+        document.documentElement.lang = lang;
+        document.title = t.pageTitle;
+
+        // Toggle button UI
+        document.getElementById('langVI').classList.toggle('active', lang === 'vi');
+        document.getElementById('langEN').classList.toggle('active', lang === 'en');
+
+        // Animate text change
+        const textEls = document.querySelectorAll('[id^="txt-"], #generateBtn, #copyBtn, #txt-last-key-label');
+        textEls.forEach(el => {
+            el.classList.remove('fade-text');
+            void el.offsetWidth; // reflow
+            el.classList.add('fade-text');
+        });
+
+        // Apply translations to static elements
+        document.getElementById('txt-server-status').textContent = t.serverStatus;
+        document.getElementById('txt-expire-label').innerHTML = t.expireLabel;
+        document.getElementById('txt-title').textContent = t.title;
+        document.getElementById('txt-desc').innerHTML = t.desc;
+        document.getElementById('txt-footer').textContent = t.footer;
+        document.getElementById('txt-last-key-label').textContent = t.lastKeyLabel;
+
+        // Update last key tooltip
+        const lastKeySpan = document.getElementById('lastKeyText');
+        if (lastKeySpan) lastKeySpan.title = t.lastKeyTitle;
+
+        // Update buttons if not mid-generation
+        const generateBtn = document.getElementById('generateBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        if (!isGenerating) {
+            // Check if a key has been generated (btn shows "new" vs initial)
+            if (generateBtn.innerText !== t.generateNewBtn && generateBtn.innerText !== t.retryBtn) {
+                generateBtn.innerText = t.generateBtn;
+            }
+            if (!copyBtn.classList.contains('copied')) {
+                copyBtn.innerText = t.copyBtn;
+            }
+        }
+    }
+
+    // ===================== INIT =====================
     window.addEventListener('DOMContentLoaded', () => {
+        // Restore language preference
+        const savedLang = localStorage.getItem('preferredLang') || 'vi';
+        currentLang = savedLang;
+        applyLanguage(currentLang);
+
+        // Restore last key
         const lastKey = localStorage.getItem('lastScriptKey');
         if (lastKey) {
             document.getElementById('lastKeyInfo').style.display = 'block';
@@ -374,8 +563,10 @@
         }
     });
 
+    // ===================== KEY GENERATION =====================
     function startGeneration() {
         if (isGenerating) return;
+        const t = translations[currentLang];
 
         const btn = document.getElementById('generateBtn');
         const display = document.getElementById('keyDisplay');
@@ -386,44 +577,43 @@
 
         isGenerating = true;
         btn.disabled = true;
-        btn.innerText = '⏳ ĐANG KHỞI TẠO KEY...';
+        btn.innerText = t.generatingBtn;
         copyBtn.style.display = 'none';
         copyBtn.classList.remove('copied');
-        copyBtn.innerText = '📋 SAO CHÉP KEY';
+        copyBtn.innerText = t.copyBtn;
 
         countdown = TOTAL_TIME;
-        display.innerHTML = 'Đang khởi tạo thuật toán...';
+        display.innerHTML = t.initializing;
         display.className = 'key-display loading';
 
         progressWrapper.classList.add('active');
         progressFill.style.transition = 'none';
         progressFill.style.width = '0%';
-        timerText.innerText = `Thời gian chờ: ${countdown}s`;
+        timerText.innerText = `${t.waitPrefix}${countdown}${t.waitSuffix}`;
 
-        // Ép vẽ lại DOM trước khi gán transition 5s
         progressFill.offsetHeight;
         progressFill.style.transition = `width ${TOTAL_TIME}s linear`;
         progressFill.style.width = '100%';
 
         const statusSteps = [
-            { t: 4, msg: 'Đang tạo chuỗi ngẫu nhiên...' },
-            { t: 2, msg: 'Đang kết nối Netlify Server...' },
-            { t: 1, msg: 'Đang đồng bộ dữ liệu GitHub...' }
+            { t: 4, key: 'step4' },
+            { t: 2, key: 'step2' },
+            { t: 1, key: 'step1' }
         ];
 
         timerInterval = setInterval(() => {
             countdown--;
-            
+            const lang = translations[currentLang];
             const step = statusSteps.find(s => s.t === countdown);
             if (step) {
-                timerText.innerText = step.msg;
+                timerText.innerText = lang[step.key];
             } else if (countdown > 0) {
-                timerText.innerText = `Thời gian chờ: ${countdown}s`;
+                timerText.innerText = `${lang.waitPrefix}${countdown}${lang.waitSuffix}`;
             }
 
             if (countdown <= 0) {
                 clearInterval(timerInterval);
-                timerText.innerText = 'Đang nhận kết quả...';
+                timerText.innerText = lang.receiving;
                 finishGeneration();
             }
         }, 1000);
@@ -438,54 +628,58 @@
         const lastKeyText = document.getElementById('lastKeyText');
 
         try {
-            // Gọi Netlify Function sinh Key mới
             const res = await fetch('/.netlify/functions/create-key');
             const data = await res.json();
 
             if (data.success && data.key) {
+                const t = translations[currentLang];
                 const newKey = data.key;
-                const expireStr = data.expireDate ? `<div class="expire-tag">⏰ Hết hạn: ${data.expireDate}</div>` : '';
-                
+                const expireStr = data.expireDate
+                    ? `<div class="expire-tag">${t.expireTag} ${data.expireDate}</div>`
+                    : '';
+
                 display.innerHTML = `${newKey}${expireStr}`;
                 display.className = 'key-display success';
 
-                // Lưu lại Key vào localStorage
                 localStorage.setItem('lastScriptKey', newKey);
                 lastKeyText.innerText = newKey;
                 lastKeyInfo.style.display = 'block';
 
                 btn.disabled = false;
-                btn.innerText = '⚡ TẠO KEY MỚI';
+                btn.innerText = t.generateNewBtn;
                 progressWrapper.classList.remove('active');
                 copyBtn.style.display = 'block';
             } else {
-                display.innerText = 'LỖI TẠO KEY!';
+                const t = translations[currentLang];
+                display.innerText = t.errKeyDisplay;
                 display.className = 'key-display';
-                alert('Lỗi Server: ' + (data.error || 'Không thể ghi Key vào CSDL'));
+                alert(t.errServer + (data.error || t.errDefault));
                 btn.disabled = false;
-                btn.innerText = '🔄 THỬ LẠI';
+                btn.innerText = t.retryBtn;
                 progressWrapper.classList.remove('active');
             }
         } catch (err) {
-            display.innerText = 'LỖI KẾT NỐI!';
+            const t = translations[currentLang];
+            display.innerText = t.errConnDisplay;
             display.className = 'key-display';
-            alert('Lỗi: Không thể kết nối tới Server Netlify. Vui lòng kiểm tra lại mạng hoặc thử lại!');
+            alert(t.errConnect);
             btn.disabled = false;
-            btn.innerText = '🔄 THỬ LẠI';
+            btn.innerText = t.retryBtn;
             progressWrapper.classList.remove('active');
         }
 
         isGenerating = false;
     }
 
+    // ===================== COPY KEY =====================
     function copyKey() {
+        const t = translations[currentLang];
         const display = document.getElementById('keyDisplay');
-        // Chỉ lấy chuỗi Key chính (tách phần thông báo hạn dùng phía dưới nếu có)
         const keyText = display.innerText.split('\n')[0].trim();
         const copyBtn = document.getElementById('copyBtn');
 
-        if (!keyText || keyText === 'TLGB-XXXX-XXXX' || keyText.includes('LỖI')) {
-            alert('Chưa có Key hợp lệ để sao chép!');
+        if (!keyText || keyText === 'TLGB-XXXX-XXXX' || keyText.includes('LỖI') || keyText.includes('ERROR')) {
+            alert(t.errNoKey);
             return;
         }
 
@@ -501,6 +695,7 @@
     }
 
     function fallbackCopy(text, btn) {
+        const t = translations[currentLang];
         const textarea = document.createElement('textarea');
         textarea.value = text;
         textarea.style.position = 'fixed';
@@ -511,16 +706,17 @@
             document.execCommand('copy');
             showCopied(btn);
         } catch (err) {
-            alert('Sao chép thủ công: ' + text);
+            alert(t.noCopyManual + text);
         }
         document.body.removeChild(textarea);
     }
 
     function showCopied(btn) {
-        btn.innerText = '✓ ĐÃ SAO CHÉP!';
+        const t = translations[currentLang];
+        btn.innerText = t.copiedBtn;
         btn.classList.add('copied');
         setTimeout(() => {
-            btn.innerText = '📋 SAO CHÉP KEY';
+            btn.innerText = t.copyBtn;
             btn.classList.remove('copied');
         }, 2200);
     }
