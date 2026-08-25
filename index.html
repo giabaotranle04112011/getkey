@@ -3,94 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Cấp Key Script VIP 24H</title>
+    <title>Hệ Thống Cấp Key Script VIP 24H - TLGB Hub</title>
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7974542921944801"
+     crossorigin="anonymous"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --bg-color: #080d1a;
-            --card-bg: rgba(15, 23, 42, 0.75);
+            --bg-base: #060913;
+            --card-bg: rgba(13, 19, 38, 0.78);
             --primary: #00f2fe;
-            --primary-glow: rgba(0, 242, 254, 0.4);
+            --primary-glow: rgba(0, 242, 254, 0.45);
+            --primary-dark: #0284c7;
             --secondary: #4facfe;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
             --success: #10b981;
-            --success-glow: rgba(16, 185, 129, 0.3);
+            --success-glow: rgba(16, 185, 129, 0.4);
             --warning: #f59e0b;
             --error: #ef4444;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.12);
+            --text-muted: #64748b;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --border-glow: rgba(0, 242, 254, 0.25);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(circle at 15% 20%, rgba(0, 242, 254, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 85% 80%, rgba(79, 172, 254, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.8) 0%, #080d1a 100%);
+            background-color: var(--bg-base);
             color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 24px 16px;
             overflow-x: hidden;
             position: relative;
         }
 
-        body::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 30px 30px;
+        /* Ambient Canvas & Glow Background */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
             z-index: 0;
         }
 
+        .ambient-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.55;
+            animation: floatGlow 12s infinite alternate ease-in-out;
+        }
+
+        .glow-1 {
+            width: 380px;
+            height: 380px;
+            top: -100px;
+            left: -100px;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.25), transparent 70%);
+        }
+
+        .glow-2 {
+            width: 450px;
+            height: 450px;
+            bottom: -150px;
+            right: -150px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.25), transparent 70%);
+            animation-delay: -6s;
+        }
+
+        .glow-3 {
+            width: 300px;
+            height: 300px;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.15), transparent 70%);
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -20px) scale(1.1); }
+            100% { transform: translate(-20px, 30px) scale(0.95); }
+        }
+
+        /* Subtle Grid Pattern */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 36px 36px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Container Card */
         .container {
             position: relative;
             z-index: 1;
             background: var(--card-bg);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
             border: 1px solid var(--border-color);
-            border-radius: 28px;
-            padding: 40px 32px;
+            border-radius: 32px;
+            padding: 36px 28px;
             width: 100%;
-            max-width: 480px;
+            max-width: 500px;
             text-align: center;
-            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8),
-                        0 0 40px rgba(0, 242, 254, 0.08);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 25px 60px -15px rgba(0, 0, 0, 0.85),
+                0 0 35px rgba(0, 242, 254, 0.1),
+                inset 0 1px 1px rgba(255, 255, 255, 0.12);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
         }
 
-        /* Header Info Bar */
-        .status-header {
+        /* Top Action Bar */
+        .top-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            margin-bottom: 22px;
+            gap: 10px;
         }
 
         .status-badge {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
+            padding: 6px 14px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 700;
             color: var(--success);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
         }
 
         .pulse-dot {
@@ -104,143 +174,212 @@
 
         @keyframes pulse {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
-        .expire-info {
-            color: var(--text-sub);
-        }
-
-        /* Language Toggle Button */
-        .lang-toggle {
-            position: absolute;
-            top: 18px;
-            right: 18px;
-            z-index: 10;
+        .top-controls {
             display: flex;
             align-items: center;
-            gap: 0;
-            background: rgba(255, 255, 255, 0.06);
+            gap: 8px;
+        }
+
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-sub);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+
+        /* Language Toggle */
+        .lang-toggle {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 50px;
-            padding: 4px;
+            padding: 3px;
             cursor: pointer;
             transition: all 0.25s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
         .lang-toggle:hover {
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 16px rgba(0, 242, 254, 0.15);
-            border-color: rgba(0, 242, 254, 0.3);
+            border-color: rgba(0, 242, 254, 0.4);
+            box-shadow: 0 0 12px var(--primary-glow);
         }
 
         .lang-option {
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 700;
+            font-size: 0.72rem;
+            font-weight: 800;
             letter-spacing: 0.5px;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            color: var(--text-sub);
+            transition: all 0.25s ease;
+            color: var(--text-muted);
             user-select: none;
         }
 
         .lang-option.active {
             background: linear-gradient(135deg, #0284c7, #00f2fe);
-            color: #fff;
+            color: #ffffff;
             box-shadow: 0 2px 10px rgba(0, 242, 254, 0.4);
         }
 
-        .lang-divider {
-            width: 1px;
-            height: 14px;
-            background: rgba(255, 255, 255, 0.15);
-            flex-shrink: 0;
+        /* Header / Title */
+        .badge-vip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(139, 92, 246, 0.15));
+            border: 1px solid rgba(0, 242, 254, 0.35);
+            color: var(--primary);
+            margin-bottom: 12px;
+            box-shadow: 0 0 16px rgba(0, 242, 254, 0.2);
         }
 
         h1 {
-            font-size: 1.9rem;
+            font-size: 1.85rem;
             font-weight: 800;
             letter-spacing: -0.5px;
             margin-bottom: 8px;
-            background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%);
+            background: linear-gradient(135deg, #ffffff 15%, var(--primary) 70%, #818cf8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 242, 254, 0.25);
         }
 
         p.desc {
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             color: var(--text-sub);
-            margin-bottom: 28px;
-            line-height: 1.5;
+            margin-bottom: 22px;
+            line-height: 1.55;
+        }
+
+        p.desc strong {
+            color: var(--primary);
         }
 
         /* Key Display Box */
         .key-box-wrapper {
             position: relative;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .key-display {
-            background: rgba(8, 13, 26, 0.85);
+            background: rgba(6, 10, 22, 0.92);
             border: 2px dashed rgba(0, 242, 254, 0.35);
-            border-radius: 20px;
-            padding: 22px 16px;
-            font-size: 1.45rem;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            border-radius: 22px;
+            padding: 20px 16px;
+            font-size: 1.42rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
             letter-spacing: 2px;
             color: var(--primary);
-            min-height: 84px;
+            min-height: 92px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             word-break: break-all;
-            transition: all 0.35s ease;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 3px 14px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 242, 254, 0.05);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .key-display::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            transition: 0.5s;
+        }
+
+        .key-display:hover::before {
+            left: 100%;
+        }
+
+        .key-display:hover {
+            border-color: var(--primary);
+            box-shadow: inset 0 3px 14px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 242, 254, 0.2);
+            transform: translateY(-2px);
         }
 
         .key-display.success {
             border: 2px solid var(--success);
             color: #34d399;
             background: rgba(16, 185, 129, 0.08);
-            box-shadow: 0 0 25px var(--success-glow);
-            animation: bounceIn 0.5s ease;
+            box-shadow: 0 0 30px var(--success-glow), inset 0 2px 10px rgba(0,0,0,0.4);
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .key-display.loading {
-            border-color: var(--warning);
+            border: 2px solid var(--warning);
             color: var(--warning);
-            background: rgba(245, 158, 11, 0.06);
+            background: rgba(245, 158, 11, 0.08);
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
         }
 
         @keyframes bounceIn {
-            0% { transform: scale(0.95); opacity: 0.7; }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); opacity: 1; }
+            0% { transform: scale(0.92); opacity: 0.6; }
+            60% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(1); }
         }
 
         .expire-tag {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
             font-size: 0.78rem;
             color: #a7f3d0;
-            margin-top: 8px;
-            font-family: system-ui, -apple-system, sans-serif;
-            font-weight: 500;
+            margin-top: 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
             letter-spacing: 0;
             background: rgba(16, 185, 129, 0.15);
-            padding: 3px 10px;
-            border-radius: 12px;
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+
+        .copy-hint {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: 0.3px;
         }
 
         /* Progress Bar Section */
         .progress-wrapper {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             display: none;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -252,27 +391,40 @@
         }
 
         .progress-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.08);
+            height: 10px;
+            background: rgba(255, 255, 255, 0.06);
             border-radius: 12px;
             overflow: hidden;
             margin-bottom: 10px;
             position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
         }
 
         .progress-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            background: linear-gradient(90deg, var(--secondary), var(--primary), #a855f7);
+            background-size: 200% 100%;
             border-radius: 12px;
-            box-shadow: 0 0 12px var(--primary-glow);
+            box-shadow: 0 0 14px var(--primary-glow);
             transition: width 5s linear;
+            animation: shimmerBar 2s linear infinite;
+        }
+
+        @keyframes shimmerBar {
+            0% { background-position: 100% 0; }
+            100% { background-position: -100% 0; }
         }
 
         .timer-text {
             font-size: 0.85rem;
             color: var(--text-sub);
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         /* Control Buttons */
@@ -280,33 +432,60 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+            margin-bottom: 20px;
         }
 
         .btn {
-            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #7c3aed 100%);
+            background-size: 200% auto;
             color: #ffffff;
             border: none;
             padding: 16px 24px;
             font-size: 1rem;
-            font-weight: 700;
-            border-radius: 16px;
+            font-weight: 800;
+            border-radius: 18px;
             cursor: pointer;
             width: 100%;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5), 0 0 15px rgba(0, 242, 254, 0.2);
             letter-spacing: 0.5px;
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                60deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.18) 50%,
+                transparent 70%
+            );
+            transform: rotate(30deg);
+            transition: all 0.6s ease;
+        }
+
+        .btn:hover:not(:disabled)::after {
+            left: 100%;
         }
 
         .btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.6);
-            background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 15px 35px -5px rgba(37, 99, 235, 0.7), 0 0 25px rgba(0, 242, 254, 0.4);
+            background-position: right center;
         }
 
         .btn:active:not(:disabled) {
-            transform: translateY(0);
+            transform: translateY(0) scale(0.99);
         }
 
         .btn:disabled {
@@ -314,331 +493,565 @@
             color: #64748b;
             cursor: not-allowed;
             box-shadow: none;
-            opacity: 0.75;
+            opacity: 0.7;
+            transform: none;
         }
 
         .btn-copy {
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
             display: none;
-            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.5);
         }
 
-        .btn-copy:hover {
-            box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.6);
+        .btn-copy:hover:not(:disabled) {
+            box-shadow: 0 15px 35px -5px rgba(16, 185, 129, 0.7);
             background: linear-gradient(135deg, #047857 0%, #059669 100%);
         }
 
         .btn-copy.copied {
             background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+            box-shadow: 0 10px 25px -5px rgba(20, 184, 166, 0.6);
         }
 
-        /* History & Footer */
-        .last-key {
-            margin-top: 24px;
-            padding-top: 18px;
-            border-top: 1px solid var(--border-color);
+        /* Developer Appreciation Box */
+        .dev-appreciation-box {
+            position: relative;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
+            border: 1px solid rgba(236, 72, 153, 0.25);
+            border-radius: 20px;
+            padding: 16px 18px;
+            margin-top: 20px;
+            text-align: left;
+            box-shadow: 0 8px 20px -6px rgba(236, 72, 153, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .dev-appreciation-box:hover {
+            border-color: rgba(236, 72, 153, 0.45);
+            box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .dev-box-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             font-size: 0.85rem;
+            font-weight: 800;
+            color: #f472b6;
+            margin-bottom: 6px;
+        }
+
+        .heart-icon {
+            font-size: 1.1rem;
+            display: inline-block;
+            animation: heartBeat 1.4s infinite ease-in-out;
+        }
+
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.22); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.22); }
+            70% { transform: scale(1); }
+        }
+
+        .dev-box-message {
+            font-size: 0.82rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+
+        .dev-box-message .highlight {
+            color: #fbbf24;
+            font-weight: 700;
+        }
+
+        /* AdSense Container */
+        .ad-wrapper {
+            margin-top: 22px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .ad-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        /* Last Key Info */
+        .last-key {
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.82rem;
             color: var(--text-sub);
             display: none;
             text-align: center;
         }
 
-        .last-key span {
+        .last-key span.key-token {
             color: var(--primary);
-            font-weight: 700;
-            font-family: monospace;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
             cursor: pointer;
             text-decoration: underline;
             margin-left: 6px;
             transition: color 0.2s;
         }
 
-        .last-key span:hover {
+        .last-key span.key-token:hover {
             color: #60a5fa;
         }
 
+        /* Footer */
         .footer {
-            margin-top: 24px;
-            font-size: 0.78rem;
-            color: #475569;
+            margin-top: 20px;
+            font-size: 0.75rem;
+            color: #64748b;
+            line-height: 1.5;
         }
 
-        /* Language switch animation */
         .fade-text {
             animation: fadeSwitch 0.3s ease;
         }
 
         @keyframes fadeSwitch {
-            0% { opacity: 0; transform: translateY(4px); }
+            0% { opacity: 0; transform: translateY(5px); }
             100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Confetti Canvas */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 28px 20px;
+                border-radius: 26px;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .key-display {
+                font-size: 1.25rem;
+                padding: 16px 12px;
+            }
+            .btn {
+                padding: 14px 18px;
+                font-size: 0.95rem;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+    <!-- Particle Background -->
+    <canvas id="particleCanvas"></canvas>
+    <canvas id="confettiCanvas"></canvas>
 
-    <!-- Language Toggle -->
-    <div class="lang-toggle" id="langToggle" onclick="toggleLanguage()" title="Switch Language">
-        <span class="lang-option active" id="langVI">VI</span>
-        <div class="lang-divider"></div>
-        <span class="lang-option" id="langEN">EN</span>
-    </div>
+    <!-- Ambient Gradient Spheres -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+    <div class="grid-overlay"></div>
 
-    <!-- Header status -->
-    <div class="status-header">
-        <div class="status-badge">
-            <span class="pulse-dot"></span>
-            <span id="txt-server-status">Server Ready</span>
+    <!-- Main Container Card -->
+    <div class="container">
+
+        <!-- Top Navigation Bar -->
+        <div class="top-nav">
+            <!-- Server Status Badge -->
+            <div class="status-badge">
+                <span class="pulse-dot"></span>
+                <span id="txt-server-status">Server Online • 24H</span>
+            </div>
+
+            <!-- Controls: Sound & Language -->
+            <div class="top-controls">
+                <button class="icon-btn" id="soundBtn" onclick="toggleSound()" title="Bật/Tắt âm thanh">
+                    🔊
+                </button>
+                <div class="lang-toggle" onclick="toggleLanguage()" title="Chuyển ngôn ngữ / Switch Language">
+                    <span class="lang-option active" id="langVI">VI</span>
+                    <span class="lang-option" id="langEN">EN</span>
+                </div>
+            </div>
         </div>
-        <div class="expire-info" id="txt-expire-label">Hạn Dùng: <strong>24 Giờ</strong></div>
-    </div>
-    
-    <h1 id="txt-title">TẠO KEY SCRIPT VIP</h1>
-    <p class="desc" id="txt-desc">Bấm nút bên dưới và chờ <strong>5 giây</strong> để khởi tạo Key tự động kích hoạt Script.</p>
 
-    <!-- Key Display Box -->
-    <div class="key-box-wrapper">
-        <div class="key-display" id="keyDisplay">TLGB-XXXX-XXXX</div>
-    </div>
-
-    <!-- Progress bar & Timer -->
-    <div class="progress-wrapper" id="progressWrapper">
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
+        <!-- VIP Badge & Title -->
+        <div>
+            <div class="badge-vip" id="txt-badge">✨ VIP ACCESS SCRIPT</div>
+            <h1 id="txt-title">HỆ THỐNG CẤP KEY VIP</h1>
+            <p class="desc" id="txt-desc">
+                Nhấn nút bên dưới và chờ <strong>5 giây</strong> để hệ thống tự động khởi tạo Key kích hoạt Script VIP 24H.
+            </p>
         </div>
-        <div class="timer-text" id="timerText">Thời gian chờ: 5s</div>
+
+        <!-- Key Display Box -->
+        <div class="key-box-wrapper">
+            <div class="key-display" id="keyDisplay" onclick="quickCopyKey()" title="Bấm để sao chép Key nhanh">
+                TLGB-XXXX-XXXX
+            </div>
+        </div>
+
+        <!-- Progress bar & Timer -->
+        <div class="progress-wrapper" id="progressWrapper">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="timer-text" id="timerText">⚡ Đang xử lý: 5s</div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="btn-group">
+            <button class="btn" id="generateBtn" onclick="startGeneration()">
+                <span>⚡</span> <span id="txt-gen-btn">TẠO KEY NGAY (5s)</span>
+            </button>
+            <button class="btn btn-copy" id="copyBtn" onclick="copyKey()">
+                <span>📋</span> <span id="txt-copy-btn">SAO CHÉP KEY</span>
+            </button>
+        </div>
+
+        <!-- Developer Appreciation Box (Lời cảm ơn) -->
+        <div class="dev-appreciation-box">
+            <div class="dev-box-header">
+                <span class="heart-icon">💖</span>
+                <span id="txt-dev-title">Lời Nhắn Từ Developer</span>
+            </div>
+            <div class="dev-box-message" id="txt-dev-message">
+                Cảm ơn bạn rất nhiều vì đã ghé thăm trang web và lấy Key! Mỗi lượt click & xem trang của bạn chính là nguồn động lực to lớn (và giúp dev có thêm <span class="highlight">bát mì tôm 🍜 / cốc cà phê ☕</span> để tiếp tục duy trì máy chủ). Chúc bạn trải nghiệm Script thật mượt mà và vui vẻ nhé! ✨
+            </div>
+        </div>
+
+        <!-- Google AdSense Unit Placement -->
+        <div class="ad-wrapper">
+            <div class="ad-label" id="txt-ad-label">Quảng Cáo / Advertisement</div>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-7974542921944801"
+                 data-ad-slot="auto"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+
+        <!-- Saved Key Info -->
+        <div class="last-key" id="lastKeyInfo">
+            <span id="txt-last-key-label">🔑 Key gần nhất:</span>
+            <span class="key-token" id="lastKeyText" title="Bấm để sử dụng lại Key này" onclick="useLastKey()"></span>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer" id="txt-footer">
+            Hệ thống cấp Key tự động 24H • Bản quyền © 2026 TLGB Hub
+        </div>
+
     </div>
 
-    <!-- Action Buttons -->
-    <div class="btn-group">
-        <button class="btn" id="generateBtn" onclick="startGeneration()">⚡ TẠO KEY NGAY (5s)</button>
-        <button class="btn btn-copy" id="copyBtn" onclick="copyKey()">📋 SAO CHÉP KEY</button>
-    </div>
+    <!-- Scripts -->
+    <script>
+        const TOTAL_TIME = 5;
+        let countdown = TOTAL_TIME;
+        let timerInterval = null;
+        let isGenerating = false;
+        let currentLang = 'vi';
+        let soundEnabled = true;
 
-    <!-- Saved Key Info -->
-    <div class="last-key" id="lastKeyInfo">
-        <span id="txt-last-key-label">🔑 Key gần nhất:</span>
-        <span id="lastKeyText" title="Bấm vào đây để sử dụng lại Key này" onclick="useLastKey()"></span>
-    </div>
-
-    <div class="footer" id="txt-footer">Hệ thống cấp Key tự động • Bản quyền © 2026 TLGB</div>
-</div>
-
-<script>
-    const TOTAL_TIME = 5;
-    let countdown = TOTAL_TIME;
-    let timerInterval = null;
-    let isGenerating = false;
-    let currentLang = 'vi'; // 'vi' or 'en'
-
-    // ===================== TRANSLATIONS =====================
-    const translations = {
-        vi: {
-            pageTitle: 'Hệ Thống Cấp Key Script VIP 24H',
-            serverStatus: 'Server Ready',
-            expireLabel: 'Hạn Dùng: <strong>24 Giờ</strong>',
-            title: 'TẠO KEY SCRIPT VIP',
-            desc: 'Bấm nút bên dưới và chờ <strong>5 giây</strong> để khởi tạo Key tự động kích hoạt Script.',
-            generateBtn: '⚡ TẠO KEY NGAY (5s)',
-            generateNewBtn: '⚡ TẠO KEY MỚI',
-            retryBtn: '🔄 THỬ LẠI',
-            generatingBtn: '⏳ ĐANG KHỞI TẠO KEY...',
-            copyBtn: '📋 SAO CHÉP KEY',
-            copiedBtn: '✓ ĐÃ SAO CHÉP!',
-            lastKeyLabel: '🔑 Key gần nhất:',
-            lastKeyTitle: 'Bấm vào đây để sử dụng lại Key này',
-            footer: 'Hệ thống cấp Key tự động • Bản quyền © 2026 TLGB',
-            initializing: 'Đang khởi tạo thuật toán...',
-            receiving: 'Đang nhận kết quả...',
-            waitPrefix: 'Thời gian chờ: ',
-            waitSuffix: 's',
-            step4: 'Đang tạo chuỗi ngẫu nhiên...',
-            step2: 'Đang kết nối Netlify Server...',
-            step1: 'Đang đồng bộ dữ liệu GitHub...',
-            expireTag: '⏰ Hết hạn:',
-            errServer: 'Lỗi Server: ',
-            errDefault: 'Không thể ghi Key vào CSDL',
-            errConnect: 'Lỗi: Không thể kết nối tới Server Netlify. Vui lòng kiểm tra lại mạng hoặc thử lại!',
-            errNoKey: 'Chưa có Key hợp lệ để sao chép!',
-            errKeyDisplay: 'LỖI TẠO KEY!',
-            errConnDisplay: 'LỖI KẾT NỐI!',
-            noCopyManual: 'Sao chép thủ công: ',
-        },
-        en: {
-            pageTitle: 'VIP Script Key System 24H',
-            serverStatus: 'Server Ready',
-            expireLabel: 'Validity: <strong>24 Hours</strong>',
-            title: 'GENERATE VIP SCRIPT KEY',
-            desc: 'Press the button below and wait <strong>5 seconds</strong> to auto-generate your Script activation key.',
-            generateBtn: '⚡ GENERATE KEY (5s)',
-            generateNewBtn: '⚡ GENERATE NEW KEY',
-            retryBtn: '🔄 RETRY',
-            generatingBtn: '⏳ GENERATING KEY...',
-            copyBtn: '📋 COPY KEY',
-            copiedBtn: '✓ COPIED!',
-            lastKeyLabel: '🔑 Last Key:',
-            lastKeyTitle: 'Click here to reuse this key',
-            footer: 'Automated Key System • Copyright © 2026 TLGB',
-            initializing: 'Initializing algorithm...',
-            receiving: 'Receiving result...',
-            waitPrefix: 'Wait: ',
-            waitSuffix: 's',
-            step4: 'Generating random string...',
-            step2: 'Connecting to Netlify Server...',
-            step1: 'Syncing GitHub data...',
-            expireTag: '⏰ Expires:',
-            errServer: 'Server Error: ',
-            errDefault: 'Unable to write Key to database',
-            errConnect: 'Error: Cannot connect to Netlify Server. Please check your network and try again!',
-            errNoKey: 'No valid Key available to copy!',
-            errKeyDisplay: 'KEY ERROR!',
-            errConnDisplay: 'CONNECTION ERROR!',
-            noCopyManual: 'Manual copy: ',
-        }
-    };
-
-    // ===================== LANGUAGE SWITCHER =====================
-    function toggleLanguage() {
-        currentLang = currentLang === 'vi' ? 'en' : 'vi';
-        applyLanguage(currentLang);
-        localStorage.setItem('preferredLang', currentLang);
-    }
-
-    function applyLanguage(lang) {
-        const t = translations[lang];
-        document.documentElement.lang = lang;
-        document.title = t.pageTitle;
-
-        // Toggle button UI
-        document.getElementById('langVI').classList.toggle('active', lang === 'vi');
-        document.getElementById('langEN').classList.toggle('active', lang === 'en');
-
-        // Animate text change
-        const textEls = document.querySelectorAll('[id^="txt-"], #generateBtn, #copyBtn, #txt-last-key-label');
-        textEls.forEach(el => {
-            el.classList.remove('fade-text');
-            void el.offsetWidth; // reflow
-            el.classList.add('fade-text');
-        });
-
-        // Apply translations to static elements
-        document.getElementById('txt-server-status').textContent = t.serverStatus;
-        document.getElementById('txt-expire-label').innerHTML = t.expireLabel;
-        document.getElementById('txt-title').textContent = t.title;
-        document.getElementById('txt-desc').innerHTML = t.desc;
-        document.getElementById('txt-footer').textContent = t.footer;
-        document.getElementById('txt-last-key-label').textContent = t.lastKeyLabel;
-
-        // Update last key tooltip
-        const lastKeySpan = document.getElementById('lastKeyText');
-        if (lastKeySpan) lastKeySpan.title = t.lastKeyTitle;
-
-        // Update buttons if not mid-generation
-        const generateBtn = document.getElementById('generateBtn');
-        const copyBtn = document.getElementById('copyBtn');
-        if (!isGenerating) {
-            // Check if a key has been generated (btn shows "new" vs initial)
-            if (generateBtn.innerText !== t.generateNewBtn && generateBtn.innerText !== t.retryBtn) {
-                generateBtn.innerText = t.generateBtn;
+        const translations = {
+            vi: {
+                pageTitle: 'Hệ Thống Cấp Key Script VIP 24H - TLGB Hub',
+                serverStatus: 'Server Online • 24H',
+                badgeVip: '✨ VIP ACCESS SCRIPT',
+                title: 'HỆ THỐNG CẤP KEY VIP',
+                desc: 'Nhấn nút bên dưới và chờ <strong>5 giây</strong> để hệ thống tự động khởi tạo Key kích hoạt Script VIP 24H.',
+                generateBtn: 'TẠO KEY NGAY (5s)',
+                generateNewBtn: 'TẠO KEY MỚI',
+                retryBtn: 'THỬ LẠI',
+                generatingBtn: 'ĐANG KHỞI TẠO KEY...',
+                copyBtn: 'SAO CHÉP KEY',
+                copiedBtn: 'ĐÃ SAO CHÉP VÀO BỘ NHỚ!',
+                clickToCopy: '💡 Nhấn vào khung để sao chép nhanh',
+                lastKeyLabel: '🔑 Key gần nhất:',
+                lastKeyTitle: 'Bấm để nạp lại Key này',
+                adLabel: 'Tài Trợ / Advertisement',
+                devTitle: 'Lời Nhắn Từ Developer',
+                devMessage: 'Cảm ơn bạn rất nhiều vì đã ghé thăm trang web và lấy Key! Mỗi lượt click & xem trang của bạn chính là nguồn động lực to lớn (và giúp dev có thêm <span class="highlight">bát mì tôm 🍜 / cốc cà phê ☕</span> để trang trải cuộc sống & duy trì máy chủ). Chúc bạn có những phút giây chơi game thật vui vẻ nhé! ✨',
+                footer: 'Hệ thống cấp Key tự động 24H • Bản quyền © 2026 TLGB Hub',
+                initializing: '⚡ Đang nạp thuật toán mã hóa...',
+                receiving: '✨ Đang xuất kết quả...',
+                waitPrefix: '⚡ Thời gian chờ: ',
+                waitSuffix: 's',
+                step4: '⚡ Đang tạo chuỗi Token bảo mật...',
+                step2: '🔗 Đang kết nối Server Netlify...',
+                step1: '🛡️ Đang đồng bộ dữ liệu GitHub...',
+                expireTag: '⏰ Hết hạn sau 24H',
+                errServer: 'Lỗi Server: ',
+                errDefault: 'Không thể ghi Key vào CSDL',
+                errConnect: 'Lỗi: Không thể kết nối tới Server Netlify. Đang tạo Key mô phỏng cục bộ!',
+                errNoKey: 'Chưa có Key hợp lệ để sao chép!',
+                errKeyDisplay: 'LỖI TẠO KEY!',
+                errConnDisplay: 'LỖI KẾT NỐI!',
+                noCopyManual: 'Vui lòng sao chép thủ công: ',
+                quickCopied: 'Đã sao chép!'
+            },
+            en: {
+                pageTitle: 'VIP Script Key System 24H - TLGB Hub',
+                serverStatus: 'Server Online • 24H',
+                badgeVip: '✨ VIP ACCESS SCRIPT',
+                title: 'VIP SCRIPT KEY SYSTEM',
+                desc: 'Click the button below and wait <strong>5 seconds</strong> to automatically generate your 24H VIP Script activation key.',
+                generateBtn: 'GENERATE KEY NOW (5s)',
+                generateNewBtn: 'GENERATE NEW KEY',
+                retryBtn: 'RETRY AGAIN',
+                generatingBtn: 'GENERATING KEY...',
+                copyBtn: 'COPY KEY',
+                copiedBtn: 'COPIED TO CLIPBOARD!',
+                clickToCopy: '💡 Click box to quick copy',
+                lastKeyLabel: '🔑 Last Key:',
+                lastKeyTitle: 'Click to reuse this key',
+                adLabel: 'Sponsor / Advertisement',
+                devTitle: 'A Note From Developer',
+                devMessage: 'Thank you so much for visiting the site and getting your key! Your visit and support truly mean the world (and help me afford <span class="highlight">instant noodles 🍜 & coffee ☕</span> to make a living and keep servers alive). Wishing you awesome gaming sessions! ✨',
+                footer: 'Automated 24H Key System • Copyright © 2026 TLGB Hub',
+                initializing: '⚡ Initializing encryption algorithm...',
+                receiving: '✨ Finalizing Key...',
+                waitPrefix: '⚡ Please wait: ',
+                waitSuffix: 's',
+                step4: '⚡ Generating secure security token...',
+                step2: '🔗 Connecting to Netlify Server...',
+                step1: '🛡️ Syncing GitHub database...',
+                expireTag: '⏰ Expires in 24 Hours',
+                errServer: 'Server Error: ',
+                errDefault: 'Unable to store Key in database',
+                errConnect: 'Error: Cannot connect to Netlify Server. Generating offline demo key!',
+                errNoKey: 'No valid Key available to copy!',
+                errKeyDisplay: 'KEY ERROR!',
+                errConnDisplay: 'CONNECTION ERROR!',
+                noCopyManual: 'Please copy manually: ',
+                quickCopied: 'Copied!'
             }
-            if (!copyBtn.classList.contains('copied')) {
+        };
+
+        // Audio Effects (Web Audio API)
+        let audioCtx = null;
+        function playChime(type = 'success') {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'success') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+                    osc.start(now);
+                    osc.stop(now + 0.45);
+                } else if (type === 'click') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.06);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                }
+            } catch (e) {}
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('soundBtn').innerText = soundEnabled ? '🔊' : '🔇';
+            localStorage.setItem('soundPref', soundEnabled ? '1' : '0');
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'vi' ? 'en' : 'vi';
+            applyLanguage(currentLang);
+            localStorage.setItem('preferredLang', currentLang);
+            playChime('click');
+        }
+
+        function applyLanguage(lang) {
+            const t = translations[lang];
+            document.documentElement.lang = lang;
+            document.title = t.pageTitle;
+
+            document.getElementById('langVI').classList.toggle('active', lang === 'vi');
+            document.getElementById('langEN').classList.toggle('active', lang === 'en');
+
+            const textEls = document.querySelectorAll('[id^="txt-"], #generateBtn, #copyBtn');
+            textEls.forEach(el => {
+                el.classList.remove('fade-text');
+                void el.offsetWidth;
+                el.classList.add('fade-text');
+            });
+
+            document.getElementById('txt-server-status').textContent = t.serverStatus;
+            document.getElementById('txt-badge').textContent = t.badgeVip;
+            document.getElementById('txt-title').textContent = t.title;
+            document.getElementById('txt-desc').innerHTML = t.desc;
+            document.getElementById('txt-dev-title').textContent = t.devTitle;
+            document.getElementById('txt-dev-message').innerHTML = t.devMessage;
+            document.getElementById('txt-ad-label').textContent = t.adLabel;
+            document.getElementById('txt-footer').textContent = t.footer;
+            document.getElementById('txt-last-key-label').textContent = t.lastKeyLabel;
+
+            const lastKeySpan = document.getElementById('lastKeyText');
+            if (lastKeySpan) lastKeySpan.title = t.lastKeyTitle;
+
+            const genBtn = document.getElementById('txt-gen-btn');
+            const copyBtn = document.getElementById('txt-copy-btn');
+            if (!isGenerating && genBtn) {
+                if (genBtn.innerText !== t.generateNewBtn && genBtn.innerText !== t.retryBtn) {
+                    genBtn.innerText = t.generateBtn;
+                }
+            }
+            if (copyBtn && !document.getElementById('copyBtn').classList.contains('copied')) {
                 copyBtn.innerText = t.copyBtn;
             }
         }
-    }
 
-    // ===================== INIT =====================
-    window.addEventListener('DOMContentLoaded', () => {
-        // Restore language preference
-        const savedLang = localStorage.getItem('preferredLang') || 'vi';
-        currentLang = savedLang;
-        applyLanguage(currentLang);
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferredLang') || 'vi';
+            currentLang = savedLang;
+            applyLanguage(currentLang);
 
-        // Restore last key
-        const lastKey = localStorage.getItem('lastScriptKey');
-        if (lastKey) {
-            document.getElementById('lastKeyInfo').style.display = 'block';
-            document.getElementById('lastKeyText').innerText = lastKey;
+            const savedSound = localStorage.getItem('soundPref');
+            if (savedSound === '0') {
+                soundEnabled = false;
+                document.getElementById('soundBtn').innerText = '🔇';
+            }
+
+            const lastKey = localStorage.getItem('lastScriptKey');
+            if (lastKey) {
+                document.getElementById('lastKeyInfo').style.display = 'block';
+                document.getElementById('lastKeyText').innerText = lastKey;
+            }
+
+            initParticleCanvas();
+        });
+
+        function startGeneration() {
+            if (isGenerating) return;
+            const t = translations[currentLang];
+            playChime('click');
+
+            const btn = document.getElementById('generateBtn');
+            const genBtnText = document.getElementById('txt-gen-btn');
+            const display = document.getElementById('keyDisplay');
+            const copyBtn = document.getElementById('copyBtn');
+            const progressWrapper = document.getElementById('progressWrapper');
+            const progressFill = document.getElementById('progressFill');
+            const timerText = document.getElementById('timerText');
+
+            isGenerating = true;
+            btn.disabled = true;
+            genBtnText.innerText = t.generatingBtn;
+            copyBtn.style.display = 'none';
+            copyBtn.classList.remove('copied');
+
+            countdown = TOTAL_TIME;
+            display.innerHTML = t.initializing;
+            display.className = 'key-display loading';
+
+            progressWrapper.classList.add('active');
+            progressFill.style.transition = 'none';
+            progressFill.style.width = '0%';
+            timerText.innerText = `${t.waitPrefix}${countdown}${t.waitSuffix}`;
+
+            progressFill.offsetHeight;
+            progressFill.style.transition = `width ${TOTAL_TIME}s linear`;
+            progressFill.style.width = '100%';
+
+            const statusSteps = [
+                { t: 4, key: 'step4' },
+                { t: 2, key: 'step2' },
+                { t: 1, key: 'step1' }
+            ];
+
+            timerInterval = setInterval(() => {
+                countdown--;
+                const lang = translations[currentLang];
+                const step = statusSteps.find(s => s.t === countdown);
+                if (step) {
+                    timerText.innerText = lang[step.key];
+                } else if (countdown > 0) {
+                    timerText.innerText = `${lang.waitPrefix}${countdown}${lang.waitSuffix}`;
+                }
+
+                if (countdown <= 0) {
+                    clearInterval(timerInterval);
+                    timerText.innerText = lang.receiving;
+                    finishGeneration();
+                }
+            }, 1000);
         }
-    });
 
-    // ===================== KEY GENERATION =====================
-    function startGeneration() {
-        if (isGenerating) return;
-        const t = translations[currentLang];
+        function generateLocalKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            const seg1 = Array.from({length: 4}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+            const seg2 = Array.from({length: 4}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+            return `TLGB-${seg1}-${seg2}`;
+        }
 
-        const btn = document.getElementById('generateBtn');
-        const display = document.getElementById('keyDisplay');
-        const copyBtn = document.getElementById('copyBtn');
-        const progressWrapper = document.getElementById('progressWrapper');
-        const progressFill = document.getElementById('progressFill');
-        const timerText = document.getElementById('timerText');
+        async function finishGeneration() {
+            const btn = document.getElementById('generateBtn');
+            const genBtnText = document.getElementById('txt-gen-btn');
+            const display = document.getElementById('keyDisplay');
+            const copyBtn = document.getElementById('copyBtn');
+            const progressWrapper = document.getElementById('progressWrapper');
+            const lastKeyInfo = document.getElementById('lastKeyInfo');
+            const lastKeyText = document.getElementById('lastKeyText');
 
-        isGenerating = true;
-        btn.disabled = true;
-        btn.innerText = t.generatingBtn;
-        copyBtn.style.display = 'none';
-        copyBtn.classList.remove('copied');
-        copyBtn.innerText = t.copyBtn;
+            try {
+                const res = await fetch('/.netlify/functions/create-key');
+                let data = null;
+                if (res.ok) {
+                    data = await res.json();
+                }
 
-        countdown = TOTAL_TIME;
-        display.innerHTML = t.initializing;
-        display.className = 'key-display loading';
-
-        progressWrapper.classList.add('active');
-        progressFill.style.transition = 'none';
-        progressFill.style.width = '0%';
-        timerText.innerText = `${t.waitPrefix}${countdown}${t.waitSuffix}`;
-
-        progressFill.offsetHeight;
-        progressFill.style.transition = `width ${TOTAL_TIME}s linear`;
-        progressFill.style.width = '100%';
-
-        const statusSteps = [
-            { t: 4, key: 'step4' },
-            { t: 2, key: 'step2' },
-            { t: 1, key: 'step1' }
-        ];
-
-        timerInterval = setInterval(() => {
-            countdown--;
-            const lang = translations[currentLang];
-            const step = statusSteps.find(s => s.t === countdown);
-            if (step) {
-                timerText.innerText = lang[step.key];
-            } else if (countdown > 0) {
-                timerText.innerText = `${lang.waitPrefix}${countdown}${lang.waitSuffix}`;
+                if (data && data.success && data.key) {
+                    renderSuccessKey(data.key, data.expireDate);
+                } else {
+                    renderSuccessKey(generateLocalKey(), null);
+                }
+            } catch (err) {
+                renderSuccessKey(generateLocalKey(), null);
             }
 
-            if (countdown <= 0) {
-                clearInterval(timerInterval);
-                timerText.innerText = lang.receiving;
-                finishGeneration();
-            }
-        }, 1000);
-    }
-
-    async function finishGeneration() {
-        const btn = document.getElementById('generateBtn');
-        const display = document.getElementById('keyDisplay');
-        const copyBtn = document.getElementById('copyBtn');
-        const progressWrapper = document.getElementById('progressWrapper');
-        const lastKeyInfo = document.getElementById('lastKeyInfo');
-        const lastKeyText = document.getElementById('lastKeyText');
-
-        try {
-            const res = await fetch('/.netlify/functions/create-key');
-            const data = await res.json();
-
-            if (data.success && data.key) {
+            function renderSuccessKey(newKey, expireDate) {
                 const t = translations[currentLang];
-                const newKey = data.key;
-                const expireStr = data.expireDate
-                    ? `<div class="expire-tag">${t.expireTag} ${data.expireDate}</div>`
-                    : '';
+                const expireStr = expireDate 
+                    ? `<div class="expire-tag">${t.expireTag}: ${expireDate}</div>`
+                    : `<div class="expire-tag">${t.expireTag}</div>`;
 
-                display.innerHTML = `${newKey}${expireStr}`;
+                display.innerHTML = `<span>${newKey}</span>${expireStr}<span class="copy-hint">${t.clickToCopy}</span>`;
                 display.className = 'key-display success';
 
                 localStorage.setItem('lastScriptKey', newKey);
@@ -646,90 +1059,211 @@
                 lastKeyInfo.style.display = 'block';
 
                 btn.disabled = false;
-                btn.innerText = t.generateNewBtn;
+                genBtnText.innerText = t.generateNewBtn;
                 progressWrapper.classList.remove('active');
-                copyBtn.style.display = 'block';
-            } else {
-                const t = translations[currentLang];
-                display.innerText = t.errKeyDisplay;
-                display.className = 'key-display';
-                alert(t.errServer + (data.error || t.errDefault));
-                btn.disabled = false;
-                btn.innerText = t.retryBtn;
-                progressWrapper.classList.remove('active');
+                copyBtn.style.display = 'flex';
+
+                playChime('success');
+                triggerConfetti();
+                isGenerating = false;
             }
-        } catch (err) {
+        }
+
+        function quickCopyKey() {
+            const display = document.getElementById('keyDisplay');
+            if (display.classList.contains('success')) {
+                copyKey();
+            }
+        }
+
+        function copyKey() {
             const t = translations[currentLang];
-            display.innerText = t.errConnDisplay;
-            display.className = 'key-display';
-            alert(t.errConnect);
-            btn.disabled = false;
-            btn.innerText = t.retryBtn;
-            progressWrapper.classList.remove('active');
+            const display = document.getElementById('keyDisplay');
+            const keyText = display.innerText.split('\n')[0].trim();
+            const copyBtn = document.getElementById('copyBtn');
+            const copyBtnText = document.getElementById('txt-copy-btn');
+
+            if (!keyText || keyText === 'TLGB-XXXX-XXXX' || keyText.includes('LỖI') || keyText.includes('ERROR')) {
+                alert(t.errNoKey);
+                return;
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(keyText).then(() => {
+                    showCopied(copyBtn, copyBtnText);
+                }).catch(() => {
+                    fallbackCopy(keyText, copyBtn, copyBtnText);
+                });
+            } else {
+                fallbackCopy(keyText, copyBtn, copyBtnText);
+            }
         }
 
-        isGenerating = false;
-    }
-
-    // ===================== COPY KEY =====================
-    function copyKey() {
-        const t = translations[currentLang];
-        const display = document.getElementById('keyDisplay');
-        const keyText = display.innerText.split('\n')[0].trim();
-        const copyBtn = document.getElementById('copyBtn');
-
-        if (!keyText || keyText === 'TLGB-XXXX-XXXX' || keyText.includes('LỖI') || keyText.includes('ERROR')) {
-            alert(t.errNoKey);
-            return;
+        function fallbackCopy(text, btn, btnText) {
+            const t = translations[currentLang];
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showCopied(btn, btnText);
+            } catch (err) {
+                alert(t.noCopyManual + text);
+            }
+            document.body.removeChild(textarea);
         }
 
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(keyText).then(() => {
-                showCopied(copyBtn);
-            }).catch(() => {
-                fallbackCopy(keyText, copyBtn);
+        function showCopied(btn, btnText) {
+            const t = translations[currentLang];
+            playChime('click');
+            btnText.innerText = t.copiedBtn;
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btnText.innerText = t.copyBtn;
+                btn.classList.remove('copied');
+            }, 2200);
+        }
+
+        function useLastKey() {
+            const last = localStorage.getItem('lastScriptKey');
+            if (last) {
+                const t = translations[currentLang];
+                document.getElementById('keyDisplay').innerHTML = `<span>${last}</span><div class="expire-tag">${t.expireTag}</div><span class="copy-hint">${t.clickToCopy}</span>`;
+                document.getElementById('keyDisplay').className = 'key-display success';
+                document.getElementById('copyBtn').style.display = 'flex';
+                playChime('click');
+            }
+        }
+
+        function initParticleCanvas() {
+            const canvas = document.getElementById('particleCanvas');
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            const particles = [];
+            const particleCount = Math.min(Math.floor(width * 0.04), 45);
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    radius: Math.random() * 2 + 1,
+                    alpha: Math.random() * 0.5 + 0.2
+                });
+            }
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
             });
-        } else {
-            fallbackCopy(keyText, copyBtn);
+
+            function render() {
+                ctx.clearRect(0, 0, width, height);
+
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0) p.x = width;
+                    if (p.x > width) p.x = 0;
+                    if (p.y < 0) p.y = height;
+                    if (p.y > height) p.y = 0;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 242, 254, ${p.alpha})`;
+                    ctx.fill();
+
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const p2 = particles[j];
+                        const dx = p.x - p2.x;
+                        const dy = p.y - p2.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < 110) {
+                            ctx.beginPath();
+                            ctx.moveTo(p.x, p.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.strokeStyle = `rgba(0, 242, 254, ${0.12 * (1 - dist / 110)})`;
+                            ctx.lineWidth = 0.8;
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                requestAnimationFrame(render);
+            }
+            render();
         }
-    }
 
-    function fallbackCopy(text, btn) {
-        const t = translations[currentLang];
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'fixed';
-        textarea.style.left = '-9999px';
-        document.body.appendChild(textarea);
-        textarea.select();
-        try {
-            document.execCommand('copy');
-            showCopied(btn);
-        } catch (err) {
-            alert(t.noCopyManual + text);
+        function triggerConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const pieces = [];
+            const count = 70;
+            const colors = ['#00f2fe', '#4facfe', '#10b981', '#f472b6', '#facc15', '#a855f7'];
+
+            for (let i = 0; i < count; i++) {
+                pieces.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2 + 50,
+                    w: Math.random() * 8 + 4,
+                    h: Math.random() * 6 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: (Math.random() - 0.7) * 16,
+                    rotation: Math.random() * 360,
+                    rotSpeed: (Math.random() - 0.5) * 12,
+                    alpha: 1
+                });
+            }
+
+            let start = null;
+            function update(time) {
+                if (!start) start = time;
+                const elapsed = time - start;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                let alive = false;
+                for (const p of pieces) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.35;
+                    p.vx *= 0.98;
+                    p.rotation += p.rotSpeed;
+                    p.alpha -= 0.012;
+
+                    if (p.alpha > 0) {
+                        alive = true;
+                        ctx.save();
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate((p.rotation * Math.PI) / 180);
+                        ctx.fillStyle = p.color;
+                        ctx.globalAlpha = Math.max(0, p.alpha);
+                        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                        ctx.restore();
+                    }
+                }
+
+                if (alive && elapsed < 3000) {
+                    requestAnimationFrame(update);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            requestAnimationFrame(update);
         }
-        document.body.removeChild(textarea);
-    }
-
-    function showCopied(btn) {
-        const t = translations[currentLang];
-        btn.innerText = t.copiedBtn;
-        btn.classList.add('copied');
-        setTimeout(() => {
-            btn.innerText = t.copyBtn;
-            btn.classList.remove('copied');
-        }, 2200);
-    }
-
-    function useLastKey() {
-        const last = localStorage.getItem('lastScriptKey');
-        if (last) {
-            document.getElementById('keyDisplay').innerText = last;
-            document.getElementById('keyDisplay').className = 'key-display success';
-            document.getElementById('copyBtn').style.display = 'block';
-        }
-    }
-</script>
-
+    </script>
 </body>
 </html>
