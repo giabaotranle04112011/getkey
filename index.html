@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ Thống Cấp Key Script VIP 24H - TLGB Hub</title>
     
-    <!-- Google AdSense -->
+    <!-- Google AdSense Account Verification -->
+    <meta name="google-adsense-account" content="ca-pub-7974542921944801">
+
+    <!-- Google AdSense Script -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7974542921944801"
      crossorigin="anonymous"></script>
 
@@ -55,7 +58,7 @@
             position: relative;
         }
 
-        /* Ambient Canvas & Glow Background */
+        /* Canvas hạt động mượt mà */
         #particleCanvas {
             position: fixed;
             top: 0;
@@ -108,7 +111,6 @@
             100% { transform: translate(-20px, 30px) scale(0.95); }
         }
 
-        /* Subtle Grid Pattern */
         .grid-overlay {
             position: fixed;
             inset: 0;
@@ -120,7 +122,7 @@
             z-index: 0;
         }
 
-        /* Container Card */
+        /* Khung kính Glassmorphism */
         .container {
             position: relative;
             z-index: 1;
@@ -140,7 +142,7 @@
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
         }
 
-        /* Top Action Bar */
+        /* Thanh điều khiển trên cùng */
         .top-nav {
             display: flex;
             justify-content: space-between;
@@ -206,7 +208,7 @@
             box-shadow: 0 0 12px var(--primary-glow);
         }
 
-        /* Language Toggle */
+        /* Nút đổi ngôn ngữ */
         .lang-toggle {
             display: inline-flex;
             align-items: center;
@@ -240,7 +242,7 @@
             box-shadow: 0 2px 10px rgba(0, 242, 254, 0.4);
         }
 
-        /* Header / Title */
+        /* Tiêu đề VIP */
         .badge-vip {
             display: inline-flex;
             align-items: center;
@@ -281,7 +283,7 @@
             color: var(--primary);
         }
 
-        /* Key Display Box */
+        /* Khung hiển thị Key */
         .key-box-wrapper {
             position: relative;
             margin-bottom: 20px;
@@ -377,7 +379,7 @@
             letter-spacing: 0.3px;
         }
 
-        /* Progress Bar Section */
+        /* Thanh tiến trình chờ */
         .progress-wrapper {
             margin-bottom: 20px;
             display: none;
@@ -427,7 +429,7 @@
             gap: 6px;
         }
 
-        /* Control Buttons */
+        /* Nút bấm Action */
         .btn-group {
             display: flex;
             flex-direction: column;
@@ -513,7 +515,7 @@
             box-shadow: 0 10px 25px -5px rgba(20, 184, 166, 0.6);
         }
 
-        /* Developer Appreciation Box */
+        /* Khung cảm ơn Developer (Kiếm sống / Mì gói / Cà phê) */
         .dev-appreciation-box {
             position: relative;
             background: linear-gradient(135deg, rgba(236, 72, 153, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
@@ -567,7 +569,7 @@
             font-weight: 700;
         }
 
-        /* AdSense Container */
+        /* Khung hiển thị quảng cáo AdSense */
         .ad-wrapper {
             margin-top: 22px;
             padding: 12px;
@@ -587,7 +589,7 @@
             font-weight: 700;
         }
 
-        /* Last Key Info */
+        /* Key gần nhất */
         .last-key {
             margin-top: 18px;
             padding-top: 14px;
@@ -629,7 +631,6 @@
             100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* Confetti Canvas */
         #confettiCanvas {
             position: fixed;
             top: 0;
@@ -661,28 +662,26 @@
 </head>
 <body>
 
-    <!-- Particle Background -->
+    <!-- Canvas hạt chuyển động -->
     <canvas id="particleCanvas"></canvas>
     <canvas id="confettiCanvas"></canvas>
 
-    <!-- Ambient Gradient Spheres -->
+    <!-- Quả cầu phát sáng Ambient Glow -->
     <div class="ambient-glow glow-1"></div>
     <div class="ambient-glow glow-2"></div>
     <div class="ambient-glow glow-3"></div>
     <div class="grid-overlay"></div>
 
-    <!-- Main Container Card -->
+    <!-- Hộp nội dung chính -->
     <div class="container">
 
-        <!-- Top Navigation Bar -->
+        <!-- Thanh điều khiển -->
         <div class="top-nav">
-            <!-- Server Status Badge -->
             <div class="status-badge">
                 <span class="pulse-dot"></span>
                 <span id="txt-server-status">Server Online • 24H</span>
             </div>
 
-            <!-- Controls: Sound & Language -->
             <div class="top-controls">
                 <button class="icon-btn" id="soundBtn" onclick="toggleSound()" title="Bật/Tắt âm thanh">
                     🔊
@@ -694,7 +693,7 @@
             </div>
         </div>
 
-        <!-- VIP Badge & Title -->
+        <!-- Tiêu đề -->
         <div>
             <div class="badge-vip" id="txt-badge">✨ VIP ACCESS SCRIPT</div>
             <h1 id="txt-title">HỆ THỐNG CẤP KEY VIP</h1>
@@ -703,14 +702,14 @@
             </p>
         </div>
 
-        <!-- Key Display Box -->
+        <!-- Khung Key VIP -->
         <div class="key-box-wrapper">
             <div class="key-display" id="keyDisplay" onclick="quickCopyKey()" title="Bấm để sao chép Key nhanh">
                 TLGB-XXXX-XXXX
             </div>
         </div>
 
-        <!-- Progress bar & Timer -->
+        <!-- Thanh tiến trình -->
         <div class="progress-wrapper" id="progressWrapper">
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -718,7 +717,7 @@
             <div class="timer-text" id="timerText">⚡ Đang xử lý: 5s</div>
         </div>
 
-        <!-- Action Buttons -->
+        <!-- Nút bấm -->
         <div class="btn-group">
             <button class="btn" id="generateBtn" onclick="startGeneration()">
                 <span>⚡</span> <span id="txt-gen-btn">TẠO KEY NGAY (5s)</span>
@@ -728,7 +727,7 @@
             </button>
         </div>
 
-        <!-- Developer Appreciation Box (Lời cảm ơn) -->
+        <!-- Hộp Tri Ân & Cảm Ơn Developer -->
         <div class="dev-appreciation-box">
             <div class="dev-box-header">
                 <span class="heart-icon">💖</span>
@@ -739,7 +738,7 @@
             </div>
         </div>
 
-        <!-- Google AdSense Unit Placement -->
+        <!-- Vị trí Quảng cáo Google AdSense -->
         <div class="ad-wrapper">
             <div class="ad-label" id="txt-ad-label">Quảng Cáo / Advertisement</div>
             <ins class="adsbygoogle"
@@ -753,20 +752,20 @@
             </script>
         </div>
 
-        <!-- Saved Key Info -->
+        <!-- Key gần nhất đã lưu -->
         <div class="last-key" id="lastKeyInfo">
             <span id="txt-last-key-label">🔑 Key gần nhất:</span>
             <span class="key-token" id="lastKeyText" title="Bấm để sử dụng lại Key này" onclick="useLastKey()"></span>
         </div>
 
-        <!-- Footer -->
+        <!-- Bản quyền -->
         <div class="footer" id="txt-footer">
             Hệ thống cấp Key tự động 24H • Bản quyền © 2026 TLGB Hub
         </div>
 
     </div>
 
-    <!-- Scripts -->
+    <!-- Xử lý Logic JavaScript -->
     <script>
         const TOTAL_TIME = 5;
         let countdown = TOTAL_TIME;
@@ -850,7 +849,7 @@
             }
         };
 
-        // Audio Effects (Web Audio API)
+        // Hiệu ứng âm thanh bằng Web Audio API
         let audioCtx = null;
         function playChime(type = 'success') {
             if (!soundEnabled) return;
@@ -1030,6 +1029,7 @@
             const lastKeyText = document.getElementById('lastKeyText');
 
             try {
+                // Kết nối tới Netlify Server Function trong repo của bạn
                 const res = await fetch('/.netlify/functions/create-key');
                 let data = null;
                 if (res.ok) {
@@ -1265,7 +1265,5 @@
             requestAnimationFrame(update);
         }
     </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7974542921944801"
-     crossorigin="anonymous"></script>
 </body>
 </html>
